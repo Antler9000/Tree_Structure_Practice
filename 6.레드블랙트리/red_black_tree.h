@@ -54,7 +54,7 @@ protected :
 				RedBlackNode* grand_parent_node = route_stack->pop();
 				RedBlackNode* great_grand_parent_node = route_stack->pop();
 
-				do_proper_rotation(target_node, parent_node, grand_parent_node, great_grand_parent_node);
+				do_proper_rotation(true, target_node, parent_node, grand_parent_node, great_grand_parent_node);
 
 				if (great_grand_parent_node != NULL) route_stack->push(great_grand_parent_node);
 				route_stack->push(grand_parent_node);
@@ -89,48 +89,50 @@ protected :
 		if (parent_node->color == RED) {
 			RedBlackNode* grand_parent_node = route_stack->pop();
 			RedBlackNode* great_grand_parent_node = route_stack->pop();
-			do_proper_rotation(target_node, parent_node, grand_parent_node, great_grand_parent_node);
+			do_proper_rotation(true, target_node, parent_node, grand_parent_node, great_grand_parent_node);
 		}
 	}
 
-	void do_proper_rotation(RedBlackNode* target_node, RedBlackNode* parent_node, RedBlackNode* grand_parent_node, RedBlackNode* great_grand_parent_node) {
+	void do_proper_rotation(bool is_double_red, RedBlackNode* target_node, RedBlackNode* parent_node, RedBlackNode* grand_parent_node, RedBlackNode* great_grand_parent_node) {
 		if (great_grand_parent_node == NULL) {
-			select_proper_rotation(target_node, parent_node, head);
+			select_proper_rotation(is_double_red, target_node, parent_node, head);
 		}
 		else if (great_grand_parent_node->lchild == grand_parent_node) {
-			select_proper_rotation(target_node, parent_node, great_grand_parent_node->lchild);
+			select_proper_rotation(is_double_red, target_node, parent_node, great_grand_parent_node->lchild);
 		}
 		else {
-			select_proper_rotation(target_node, parent_node, great_grand_parent_node->rchild);
+			select_proper_rotation(is_double_red, target_node, parent_node, great_grand_parent_node->rchild);
 		}
 	}
 
 	//회전으로 인해 조부 노드의 위치가 변하면, 증조부 노드의 자식 포인터도 그에 맞게 업데이트해줘야 한다.
 	//따라서 조부 노드의 경우에는 단순히 해당 노드의 포인터를 값으로 받아오지 않고, 증조부 노드의 자식 포인터의 레퍼런스 인자로 받아왔다.
-	void select_proper_rotation(RedBlackNode* target_node, RedBlackNode* parent_node, RedBlackNode*& grand_parent_node) {
+	void select_proper_rotation(bool is_double_red, RedBlackNode* target_node, RedBlackNode* parent_node, RedBlackNode*& grand_parent_node) {
 		if (grand_parent_node->lchild == parent_node) {
 			if (parent_node->lchild == target_node) {
-				LL_rotation(target_node, parent_node, grand_parent_node);
+				LL_rotation(is_double_red, target_node, parent_node, grand_parent_node);
 			}
 			else {
-				LR_rotation(target_node, parent_node, grand_parent_node);
+				LR_rotation(is_double_red, target_node, parent_node, grand_parent_node);
 			}
 		}
 		else {
 			if (parent_node->lchild == target_node) {
-				RL_rotation(target_node, parent_node, grand_parent_node);
+				RL_rotation(is_double_red, target_node, parent_node, grand_parent_node);
 			}
 			else {
-				RR_rotation(target_node, parent_node, grand_parent_node);
+				RR_rotation(is_double_red, target_node, parent_node, grand_parent_node);
 			}
 		}
 	}
 
 	//조부 노드의 인자를 레퍼런스 인자로 받아오는 이유는 위 select_proper_rotation(...)메소드에 기재되어 있다.
-	void LL_rotation(RedBlackNode* target_node, RedBlackNode* parent_node, RedBlackNode*& grand_parent_node){
-		grand_parent_node->color = RED;
-		parent_node->color = BLACK;
-		target_node->color = RED;
+	void LL_rotation(bool is_double_red, RedBlackNode* target_node, RedBlackNode* parent_node, RedBlackNode*& grand_parent_node){
+		if (is_double_red == true) {
+			grand_parent_node->color = RED;
+			parent_node->color = BLACK;
+			target_node->color = RED;
+		}
 
 		grand_parent_node->lchild = parent_node->rchild;
 		parent_node->rchild = grand_parent_node;
@@ -138,26 +140,28 @@ protected :
 	}
 
 	//조부 노드의 인자를 레퍼런스 인자로 받아오는 이유는 위 select_proper_rotation(...)메소드에 기재되어 있다.
-	void LR_rotation(RedBlackNode* target_node, RedBlackNode* parent_node, RedBlackNode*& grand_parent_node){
+	void LR_rotation(bool is_double_red, RedBlackNode* target_node, RedBlackNode* parent_node, RedBlackNode*& grand_parent_node){
 		grand_parent_node->lchild = target_node;
 		parent_node->rchild = target_node->lchild;
 		target_node->lchild = parent_node;
-		LL_rotation(parent_node, target_node, grand_parent_node);
+		LL_rotation(is_double_red, parent_node, target_node, grand_parent_node);
 	}
 
 	//조부 노드의 인자를 레퍼런스 인자로 받아오는 이유는 위 select_proper_rotation(...)메소드에 기재되어 있다.
-	void RL_rotation(RedBlackNode* target_node, RedBlackNode* parent_node, RedBlackNode*& grand_parent_node){
+	void RL_rotation(bool is_double_red, RedBlackNode* target_node, RedBlackNode* parent_node, RedBlackNode*& grand_parent_node){
 		grand_parent_node->rchild = target_node;
 		parent_node->lchild = target_node->rchild;
 		target_node->rchild = parent_node;
-		RR_rotation(parent_node, target_node, grand_parent_node);
+		RR_rotation(is_double_red, parent_node, target_node, grand_parent_node);
 	}
 
 	//조부 노드의 인자를 레퍼런스 인자로 받아오는 이유는 위 select_proper_rotation(...)메소드에 기재되어 있다.
-	void RR_rotation(RedBlackNode* target_node, RedBlackNode* parent_node, RedBlackNode*& grand_parent_node){
-		grand_parent_node->color = RED;
-		parent_node->color = BLACK;
-		target_node->color = RED;
+	void RR_rotation(bool is_double_red, RedBlackNode* target_node, RedBlackNode* parent_node, RedBlackNode*& grand_parent_node){
+		if (is_double_red == true) {
+			grand_parent_node->color = RED;
+			parent_node->color = BLACK;
+			target_node->color = RED;
+		}
 
 		grand_parent_node->rchild = parent_node->lchild;
 		parent_node->lchild = grand_parent_node;
@@ -266,34 +270,58 @@ protected :
 			return;
 		}
 		//3~5
+		if (parent_of_predecessor->lchild == predecessor_node) parent_of_predecessor->lchild = NULL;
+		else parent_of_predecessor->rchild = NULL;
+		delete predecessor_node;
 		balance_the_black_node_by_family(predecessor_node, parent_of_predecessor, grand_parent_of_predecessor, route_stack);
 	}
 
 	void balance_the_black_node_by_family(RedBlackNode* predecessor_node, RedBlackNode* parent_of_predecessor, RedBlackNode* grand_parent_of_predecessor, Stack<RedBlackNode*>* route_stack) {
 		//3.앞선 경우들도 아니라면, 균형을 맞추기 위해 댕겨올 자매노드의 자식(=조카) 레드노드가 있는가?
 		// -> 그렇다면 회전을 통해서 블랙 노드의 균형을 맞추면 된다. 색깔은 회전 이전에 원래 그 자리에 위치해있던 노드의 색깔을 물려받도록 한다
-		RedBlackNode* brother_node = NULL;
-		if (parent_of_predecessor->lchild == predecessor_node) brother_node = parent_of_predecessor->rchild;
-		else brother_node = parent_of_predecessor->lchild;
+		RedBlackNode* brother_node;
+		if (parent_of_predecessor->lchild != NULL && parent_of_predecessor->lchild != predecessor_node) brother_node = parent_of_predecessor->lchild;
+		else if (parent_of_predecessor->rchild != NULL && parent_of_predecessor->rchild != predecessor_node) brother_node = parent_of_predecessor->rchild;
+		else brother_node = NULL;
+
 
 		if (brother_node != NULL) {
-			if ((brother_node->lchild != NULL) && (brother_node->lchild->color == RED)) {
-				do_proper_rotation(brother_node->lchild, brother_node, parent_of_predecessor, grand_parent_of_predecessor);
+			if (brother_node->color == RED) {
+				//균형 조건에 의하면 무조건 두 개의 검은색 조카 노드가 존재하는 상태이므로, 회전으로 균형을 맞추도록 하자.
+				//LL 회전과 LR 회전 중의 선택, 그리고 RL 회전과 RR 회전 중의 선택은 자유이다. 여기서는 회전 비용이 적은 LL, RR 회전을 택했다.
+				//회전에 택해지지 못한 녀석이 빨간색을 가져가야 한다.
+				//레드 노드가 부모 자식간에 연달아 나타나서 회전하는 것이 아니므로, 회전시 자동으로 색칠을 조정하면 안 되기에 인자로 false로 준다.
+				if (parent_of_predecessor->lchild == brother_node) {
+					brother_node->color = BLACK;
+					brother_node->rchild->color = RED;
+					do_proper_rotation(false, brother_node->lchild, brother_node, parent_of_predecessor, grand_parent_of_predecessor);
+					return;
+				}
+				else {
+					brother_node->color = BLACK;
+					brother_node->lchild->color = RED;
+					do_proper_rotation(false, brother_node->rchild, brother_node, parent_of_predecessor, grand_parent_of_predecessor);
+					return;
+				}
+			}
+			else if ((brother_node->lchild != NULL) && (brother_node->lchild->color == RED)) {
+				//레드 노드가 부모 자식간에 연달아 나타나서 회전하는 것이 아니므로, 회전시 자동으로 색칠을 조정하면 안 되기에 인자로 false로 준다.
+				brother_node->lchild->color = BLACK;
+				do_proper_rotation(false, brother_node->lchild, brother_node, parent_of_predecessor, grand_parent_of_predecessor);
 				return;
 			}
 			else if ((brother_node->rchild != NULL) && (brother_node->rchild->color == RED)) {
-				do_proper_rotation(brother_node->rchild, brother_node, parent_of_predecessor, grand_parent_of_predecessor);
+
+				//레드 노드가 부모 자식간에 연달아 나타나서 회전하는 것이 아니므로, 회전시 자동으로 색칠을 조정하면 안 되기에 인자로 false로 준다.
+				brother_node->rchild->color = BLACK;
+				do_proper_rotation(false, brother_node->rchild, brother_node, parent_of_predecessor, grand_parent_of_predecessor);
 				return;
 			}
 		}
 
 		//4.위 경우도 아니라면, 부모노드가 레드노드인가?
-		// -> 자신은 삭제하고, 부모노드는 블랙노드가 되도록 하고, 자매 노드가 있으면 레드 노드가 되도록 하여 균형을 맞추자
+		// -> 부모노드는 블랙노드가 되도록 하고, 자매 노드가 있으면 레드 노드가 되도록 하여 균형을 맞추자
 		if (parent_of_predecessor->color == RED) {
-			if (parent_of_predecessor->lchild == predecessor_node) parent_of_predecessor->lchild = NULL;
-			else parent_of_predecessor->rchild = NULL;
-			delete predecessor_node;
-
 			parent_of_predecessor->color = BLACK;
 			if(brother_node != NULL) brother_node->color = RED;
 			return;
@@ -301,11 +329,7 @@ protected :
 
 
 		//5.위 경우도 아니라면
-		// -> 자신은 삭제하도록 하고, 자매 노드가 있으면 레드 노드가 되도록 하자. 그리고 부모노드 위치의 삭제 문제로 변환하여 다시 3번부터 수행하도록 하자
-		if (parent_of_predecessor->lchild == predecessor_node) parent_of_predecessor->lchild = NULL;
-		else parent_of_predecessor->rchild = NULL;
-		delete predecessor_node;
-
+		// -> 자매 노드가 있으면 레드 노드가 되도록 하자. 그리고 부모노드 위치의 삭제 문제로 변환하여 다시 3번부터 수행하도록 하자
 		if (brother_node != NULL) brother_node->color = RED;
 
 		if (grand_parent_of_predecessor != NULL) {

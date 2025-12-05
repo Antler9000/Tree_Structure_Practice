@@ -5,10 +5,12 @@ int main() {
 	test_tree.insert(5, 55);
 	test_tree.insert(9, 99);
 	test_tree.insert(8, 88);
+	test_tree.insert(6, 66);
 	test_tree.insert(7, 77);
 	test_tree.insert(1, 11);
 	test_tree.insert(2, 22);
 	test_tree.insert(3, 33);
+	test_tree.insert(4, 44);
 	test_tree.preorder_print();
 
 	RedBlackTree& copied_test_tree = *(new RedBlackTree());
@@ -24,7 +26,13 @@ int main() {
 	test_tree.remove(3);
 	test_tree.preorder_print();
 
+	test_tree.remove(4);
+	test_tree.preorder_print();
+
 	test_tree.remove(5);
+	test_tree.preorder_print();
+
+	test_tree.remove(6);
 	test_tree.preorder_print();
 
 	test_tree.remove(7);
