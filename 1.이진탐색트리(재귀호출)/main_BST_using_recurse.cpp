@@ -2,34 +2,34 @@
 
 int main() {
 	BST test_BST;
-	test_BST.insert(5, 1515);
-	test_BST.insert(7, 2727);
-	test_BST.insert(3, 1313);
-	test_BST.insert(4, 2424);
-	test_BST.insert(6, 3636);
-	test_BST.preorder_print();
+	test_BST.Insert(5, 1515);
+	test_BST.Insert(7, 2727);
+	test_BST.Insert(3, 1313);
+	test_BST.Insert(4, 2424);
+	test_BST.Insert(6, 3636);
+	test_BST.PreorderPrint();
 
 	BST copied_BST;
-	copied_BST.copy_from(&test_BST);
-	copied_BST.preorder_print();
+	copied_BST.CopyFrom(&test_BST);
+	copied_BST.PreorderPrint();
 
-	test_BST.remove(7);
-	test_BST.preorder_print();
+	test_BST.Remove(7);
+	test_BST.PreorderPrint();
 
-	test_BST.remove(5);
-	test_BST.preorder_print();
+	test_BST.Remove(5);
+	test_BST.PreorderPrint();
 
-	test_BST.remove(6);
-	test_BST.preorder_print();
+	test_BST.Remove(6);
+	test_BST.PreorderPrint();
 
-	test_BST.remove(4);
-	test_BST.preorder_print();
+	test_BST.Remove(4);
+	test_BST.PreorderPrint();
 
-	test_BST.remove(3);
-	test_BST.preorder_print();
+	test_BST.Remove(3);
+	test_BST.PreorderPrint();
 
-	test_BST.remove_all();
-	test_BST.preorder_print();
+	test_BST.RemoveAll();
+	test_BST.PreorderPrint();
 
 	return 0;
 }
