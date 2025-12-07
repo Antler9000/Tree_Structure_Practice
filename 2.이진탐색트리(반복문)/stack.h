@@ -10,79 +10,79 @@ class Stack;
 template <class T>
 class StackNode {
 	friend class Stack<T>;
-	T data;
-	StackNode* child;
+	T m_data;
+	StackNode* m_child;
 
 	StackNode(T data) {
-		this->data = data;
-		this->child = NULL;
+		this->m_data = data;
+		this->m_child = NULL;
 	}
 };
 
 template <class T>
 class Stack {
-	StackNode<T>* head;
+	StackNode<T>* m_head;
 
 public:
 	Stack() {
-		head = NULL;
+		m_head = NULL;
 	}
 
-	void push(T data) {
-		if (head == NULL) {
-			head = new StackNode<T>(data);
+	void Push(T data) {
+		if (m_head == NULL) {
+			m_head = new StackNode<T>(data);
 		}
 		else {
-			StackNode<T>* traverse_ptr = head;
-			while (traverse_ptr->child) {
-				traverse_ptr = traverse_ptr->child;
+			StackNode<T>* traverse_ptr = m_head;
+			while (traverse_ptr->m_child) {
+				traverse_ptr = traverse_ptr->m_child;
 			}
-			traverse_ptr->child = new StackNode<T>(data);
+			traverse_ptr->m_child = new StackNode<T>(data);
 		}
 	}
 
-	T pop() {
-		if (head == NULL) {
+	T Pop() {
+		if (m_head == NULL) {
 			return NULL;
 		}
 
-		if (head->child == NULL) {
-			T temp = head->data;
-			delete head;
-			head = NULL;
+		if (m_head->m_child == NULL) {
+			T temp = m_head->m_data;
+			delete m_head;
+			m_head = NULL;
 			return temp;
 		}
 		else {
-			StackNode<T>* traverse_ptr = head;
-			while (traverse_ptr->child->child != NULL) {
-				traverse_ptr = traverse_ptr->child;
+			StackNode<T>* traversePtr = m_head;
+			while (traversePtr->m_child->m_child != NULL) {
+				traversePtr = traversePtr->m_child;
 			}
-			T temp = traverse_ptr->child->data;
-			delete traverse_ptr->child;
-			traverse_ptr->child = NULL;
+			T temp = traversePtr->m_child->m_data;
+			delete traversePtr->m_child;
+			traversePtr->m_child = NULL;
 			return temp;
 		}
 	}
 
-	T get_top() {
-		if (head == NULL) {
+	T GetTop() {
+		if (m_head == NULL) {
 			return NULL;
 		}
 
-		if (head->child == NULL) {
-			return head->data;
+		if (m_head->m_child == NULL) {
+			return m_head->m_data;
 		}
 		else {
-			StackNode<T>* traverse_ptr = head;
-			while (traverse_ptr->child->child) {
-				traverse_ptr = traverse_ptr->child;
+			StackNode<T>* traversePtr = m_head;
+			while (traversePtr->m_child->m_child) {
+				traversePtr = traversePtr->m_child;
 			}
-			return traverse_ptr->child->data;
+			return traversePtr->m_child->m_data;
 		}
 	}
 
-	bool is_empty() {
-		if (head == NULL) return true;
+	bool IsEmpty() {
+		if (m_head == NULL) return true;
 		else return false;
 	}
 };
