@@ -1,36 +1,36 @@
 #include "heap.h"
 
-void Heap::reorder_by_promoting() {
-	int target_index = item_num - 1;
-	int parent_index = get_parent_index(target_index);
+void Heap::ReorderByPromoting() {
+	int targetIndex = m_itemNum - 1;
+	int parentIndex = getParentIndex(targetIndex);
 
-	while ((target_index > 0) && is_not_ordered(parent_index, target_index)) {
-		swap(data[target_index], data[parent_index]);
-		target_index = parent_index;
-		parent_index = get_parent_index(target_index);
+	while ((targetIndex > 0) && IsNotOrdered(parentIndex, targetIndex)) {
+		Swap(m_data[targetIndex], m_data[parentIndex]);
+		targetIndex = parentIndex;
+		parentIndex = getParentIndex(targetIndex);
 	}
 }
 
-void Heap::reorder_by_demoting() {
-	int target_index = 0;
-	int left_child_index = get_left_child_index(target_index);
-	int right_child_index = get_right_child_index(target_index);
-	int target_child_index;
+void Heap::ReorderByDemoting() {
+	int targetIndex = 0;
+	int leftChildIndex = getLeftChildIndex(targetIndex);
+	int rightChildIndex = getRightChildIndex(targetIndex);
+	int targetChildIndex;
 
-	while (left_child_index <= item_num) {
-		if (right_child_index <= item_num) {
-			if (is_left_child_target(left_child_index, right_child_index)) target_child_index = left_child_index;
-			else target_child_index = right_child_index;
+	while (leftChildIndex <= m_itemNum) {
+		if (rightChildIndex <= m_itemNum) {
+			if (IsLeftChildTarget(leftChildIndex, rightChildIndex)) targetChildIndex = leftChildIndex;
+			else targetChildIndex = rightChildIndex;
 		}
 		else {
-			target_child_index = left_child_index;
+			targetChildIndex = leftChildIndex;
 		}
 
-		if (is_not_ordered(target_index, target_child_index)) {
-			swap(data[target_index], data[target_child_index]);
-			target_index = target_child_index;
-			left_child_index = get_left_child_index(target_index);
-			right_child_index = get_right_child_index(target_index);
+		if (IsNotOrdered(targetIndex, targetChildIndex)) {
+			Swap(m_data[targetIndex], m_data[targetChildIndex]);
+			targetIndex = targetChildIndex;
+			leftChildIndex = getLeftChildIndex(targetIndex);
+			rightChildIndex = getRightChildIndex(targetIndex);
 		}
 		else {
 			break;
