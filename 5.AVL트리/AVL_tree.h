@@ -3,66 +3,66 @@
 
 #include "../2.이진탐색트리(반복문)/BST_using_while.h"
 
-class AVL_node {
-	friend class BST_template<AVL_node>;
+class AVLNode {
+	friend class BSTTemplate<AVLNode>;
 	friend class AVL_tree;
-	int key;
-	int data;
-	int height_from_leaf;
-	AVL_node* lchild;
-	AVL_node* rchild;
+	int m_key;
+	int m_data;
+	int m_heightFromLeaf;
+	AVLNode* m_lChild;
+	AVLNode* m_rChild;
 
-	AVL_node(int key, int data) {
-		this->key = key;
-		this->data = data;
-		this->height_from_leaf = 0;
-		this->lchild = NULL;
-		this->rchild = NULL;
+	AVLNode(int newKey, int newData) {
+		this->m_key = newKey;
+		this->m_data = newData;
+		this->m_heightFromLeaf = 0;
+		this->m_lChild = NULL;
+		this->m_rChild = NULL;
 	}
 
-	inline void print_node() {
-		cout << "node key : " << key << " / node data : " << data << endl;
+	inline void PrintNode() {
+		cout << "node m_key : " << m_key << " / node m_data : " << m_data << endl;
 	}
 };
 
-class AVL_tree : public BST_template<AVL_node> {
+class AVL_tree : public BSTTemplate<AVLNode> {
 protected :
-	void remove_target(AVL_node*& target_ptr, Stack<AVL_node*>* ancester_node_stack);
+	void RemoveTarget(AVLNode*& targetPtr, Stack<AVLNode*>* ancesterNodeStack);
 
-	void replace_with_inorder_predecessor(AVL_node*& target_ptr, Stack<AVL_node*>* ancester_node_stack);
+	void ReplaceWithInorderPredecessor(AVLNode*& targetPtr, Stack<AVLNode*>* ancesterNodeStack);
 
-	void replace_with_inorder_successor(AVL_node*& target_ptr, Stack<AVL_node*>* ancester_node_stack);
+	void ReplaceWithInorderSuccessor(AVLNode*& targetPtr, Stack<AVLNode*>* ancesterNodeStack);
 
-	void balancing_all_target_to_root(Stack<AVL_node*>* ancester_node_stack);
+	void BalancingAllTargetToRoot(Stack<AVLNode*>* ancesterNodeStack);
 
-	void balancing_target_node(AVL_node* target_node, AVL_node* parent_node);
+	void BalancingTargetNode(AVLNode* targetNode, AVLNode* parentNode);
 
-	void LL_rotation(AVL_node* target_node, AVL_node* parent_node);
+	void LLRotation(AVLNode* targetNode, AVLNode* parentNode);
 
-	void LR_rotation(AVL_node* target_node, AVL_node* parent_node);
+	void LRRotation(AVLNode* targetNode, AVLNode* parentNode);
 
-	void RL_rotation(AVL_node* target_node, AVL_node* parent_node);
+	void RLRotation(AVLNode* targetNode, AVLNode* parentNode);
 
-	void RR_rotation(AVL_node* target_node, AVL_node* parent_node);
+	void RRRotation(AVLNode* targetNode, AVLNode* parentNode);
 
-	void update_height(AVL_node* target_node) {
-		int height_from_lchild = 0;
-		int height_from_rchild = 0;
-		if (target_node->lchild != NULL) height_from_lchild = 1 + target_node->lchild->height_from_leaf;
-		if (target_node->rchild != NULL) height_from_rchild = 1 + target_node->rchild->height_from_leaf;
-		target_node->height_from_leaf = max(height_from_lchild, height_from_rchild);
+	void UpdateHeight(AVLNode* targetNode) {
+		int heightFromLChild = 0;
+		int heightFromRChild = 0;
+		if (targetNode->m_lChild != NULL) heightFromLChild = 1 + targetNode->m_lChild->m_heightFromLeaf;
+		if (targetNode->m_rChild != NULL) heightFromRChild = 1 + targetNode->m_rChild->m_heightFromLeaf;
+		targetNode->m_heightFromLeaf = Max(heightFromLChild, heightFromRChild);
 	}
 
-	int max(int a, int b) {
+	int Max(int a, int b) {
 		return (a > b) ? a : b;
 	}
 
 public :
-	AVL_tree() : BST_template() {}
+	AVL_tree() : BSTTemplate() {}
 
-	void insert(int new_key, int new_data);
+	void Insert(int newKey, int newData);
 
-	void remove(int target_key);
+	void Remove(int targetKey);
 };
 
 #endif //AVL_TREE_H
