@@ -1,66 +1,66 @@
 #include"splay_tree.h"
 
-int SplayTree::retrieve(int target_key) {
-	SplayNode* traverse_ptr = head;
-	SplayNode* father_of_traverse_ptr = NULL;
-	SplayNode* grandfather_of_traverse_ptr = NULL;
-	SplayNode* greatgrandfather_of_traverse_ptr = NULL;
-	while (traverse_ptr != NULL) {
-		if (target_key < traverse_ptr->key) {
-			greatgrandfather_of_traverse_ptr = grandfather_of_traverse_ptr;
-			grandfather_of_traverse_ptr = father_of_traverse_ptr;
-			father_of_traverse_ptr = traverse_ptr;
-			traverse_ptr = traverse_ptr->lchild;
+int SplayTree::Retrieve(int targetKey) {
+	SplayNode* traversePtr = m_head;
+	SplayNode* fatherOfTraversePtr = NULL;
+	SplayNode* grandfatherOfTraversePtr = NULL;
+	SplayNode* greatgrandfatherOfTraversePtr = NULL;
+	while (traversePtr != NULL) {
+		if (targetKey < traversePtr->m_key) {
+			greatgrandfatherOfTraversePtr = grandfatherOfTraversePtr;
+			grandfatherOfTraversePtr = fatherOfTraversePtr;
+			fatherOfTraversePtr = traversePtr;
+			traversePtr = traversePtr->m_lChild;
 		}
-		else if (traverse_ptr->key < target_key) {
-			greatgrandfather_of_traverse_ptr = grandfather_of_traverse_ptr;
-			grandfather_of_traverse_ptr = father_of_traverse_ptr;
-			father_of_traverse_ptr = traverse_ptr;
-			traverse_ptr = traverse_ptr->rchild;
+		else if (traversePtr->m_key < targetKey) {
+			greatgrandfatherOfTraversePtr = grandfatherOfTraversePtr;
+			grandfatherOfTraversePtr = fatherOfTraversePtr;
+			fatherOfTraversePtr = traversePtr;
+			traversePtr = traversePtr->m_rChild;
 		}
 		else {
-			splay_target(greatgrandfather_of_traverse_ptr, grandfather_of_traverse_ptr, father_of_traverse_ptr, traverse_ptr);
-			return traverse_ptr->data;
+			SplayTarget(greatgrandfatherOfTraversePtr, grandfatherOfTraversePtr, fatherOfTraversePtr, traversePtr);
+			return traversePtr->m_data;
 		}
 	}
 }
 
-void SplayTree::splay_target(SplayNode* greatgrandfather_of_traverse_ptr, SplayNode* grandfather_of_target, SplayNode* father_of_target, SplayNode* target) {
-	if (greatgrandfather_of_traverse_ptr != NULL) {
-		if (greatgrandfather_of_traverse_ptr->lchild == grandfather_of_target) {
-			if (grandfather_of_target->lchild == father_of_target) {
-				if (father_of_target->lchild == target) LL_ZIG_ZIG(greatgrandfather_of_traverse_ptr->lchild, father_of_target, target);
-				else	 LR_ZIG_ZAG(greatgrandfather_of_traverse_ptr->lchild, father_of_target, target);
+void SplayTree::SplayTarget(SplayNode* greatgrandfatherOfTraversePtr, SplayNode* grandfatherOfTarget, SplayNode* fatherOfTarget, SplayNode* target) {
+	if (greatgrandfatherOfTraversePtr != NULL) {
+		if (greatgrandfatherOfTraversePtr->m_lChild == grandfatherOfTarget) {
+			if (grandfatherOfTarget->m_lChild == fatherOfTarget) {
+				if (fatherOfTarget->m_lChild == target) LLZigZig(greatgrandfatherOfTraversePtr->m_lChild, fatherOfTarget, target);
+				else	 LRZigZag(greatgrandfatherOfTraversePtr->m_lChild, fatherOfTarget, target);
 			}
 			else {
-				if (father_of_target->lchild == target) RL_ZIG_ZAG(greatgrandfather_of_traverse_ptr->lchild, father_of_target, target);
-				else RR_ZIG_ZIG(greatgrandfather_of_traverse_ptr->lchild, father_of_target, target);
+				if (fatherOfTarget->m_lChild == target) RLZigZag(greatgrandfatherOfTraversePtr->m_lChild, fatherOfTarget, target);
+				else RRZigZig(greatgrandfatherOfTraversePtr->m_lChild, fatherOfTarget, target);
 			}
 		}
 		else {
-			if (grandfather_of_target->lchild == father_of_target) {
-				if (father_of_target->lchild == target) LL_ZIG_ZIG(greatgrandfather_of_traverse_ptr->rchild, father_of_target, target);
-				else	 LR_ZIG_ZAG(greatgrandfather_of_traverse_ptr->rchild, father_of_target, target);
+			if (grandfatherOfTarget->m_lChild == fatherOfTarget) {
+				if (fatherOfTarget->m_lChild == target) LLZigZig(greatgrandfatherOfTraversePtr->m_rChild, fatherOfTarget, target);
+				else	 LRZigZag(greatgrandfatherOfTraversePtr->m_rChild, fatherOfTarget, target);
 			}
 			else {
-				if (father_of_target->lchild == target) RL_ZIG_ZAG(greatgrandfather_of_traverse_ptr->rchild, father_of_target, target);
-				else RR_ZIG_ZIG(greatgrandfather_of_traverse_ptr->rchild, father_of_target, target);
+				if (fatherOfTarget->m_lChild == target) RLZigZag(greatgrandfatherOfTraversePtr->m_rChild, fatherOfTarget, target);
+				else RRZigZig(greatgrandfatherOfTraversePtr->m_rChild, fatherOfTarget, target);
 			}
 		}
 	}
-	else if (grandfather_of_target != NULL) {
-		if (grandfather_of_target->lchild == father_of_target) {
-			if (father_of_target->lchild == target) LL_ZIG_ZIG(head, father_of_target, target);
-			else	 LR_ZIG_ZAG(head, father_of_target, target);
+	else if (grandfatherOfTarget != NULL) {
+		if (grandfatherOfTarget->m_lChild == fatherOfTarget) {
+			if (fatherOfTarget->m_lChild == target) LLZigZig(m_head, fatherOfTarget, target);
+			else	 LRZigZag(m_head, fatherOfTarget, target);
 		}
 		else {
-			if (father_of_target->lchild == target) RL_ZIG_ZAG(head, father_of_target, target);
-			else RR_ZIG_ZIG(head, father_of_target, target);
+			if (fatherOfTarget->m_lChild == target) RLZigZag(m_head, fatherOfTarget, target);
+			else RRZigZig(m_head, fatherOfTarget, target);
 		}
 	}
-	else if (father_of_target != NULL) {
-		if (father_of_target->lchild == target) L_ZIG(head, target);
-		else R_ZIG(head, target);
+	else if (fatherOfTarget != NULL) {
+		if (fatherOfTarget->m_lChild == target) LZig(m_head, target);
+		else RZig(m_head, target);
 	}
 	else {
 		//We cannot splay the head. So, let's do nothing.
