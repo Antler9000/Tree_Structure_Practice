@@ -7,8 +7,8 @@ enum NodeColor { RED, BLACK };
 
 //이상하게 여기에만 정의해놨는데도 이 연산자 오버로딩에서는 중복정의 에러가 떠서, 그냥 inline으로 박제해서 해결함
 //ostream 클래스는 복사생성자가 없으므로, 값복사가 아니라 레퍼런스 방식으로 전달 받음
-inline ostream& operator <<(ostream& out, NodeColor color) {
-	if (color == RED) {
+inline ostream& operator <<(ostream& out, NodeColor m_color) {
+	if (m_color == RED) {
 		out << "RED";
 	}
 	else {
@@ -18,326 +18,325 @@ inline ostream& operator <<(ostream& out, NodeColor color) {
 }
 
 class RedBlackNode {
-	friend class BST_template<RedBlackNode>;
+	friend class BSTTemplate<RedBlackNode>;
 	friend class RedBlackTree;
-	int key;
-	int data;
-	NodeColor color;
-	RedBlackNode* lchild;
-	RedBlackNode* rchild;
+	int m_key;
+	int m_data;
+	NodeColor m_color;
+	RedBlackNode* m_lChild;
+	RedBlackNode* m_rChild;
 
-	RedBlackNode(int key, int data) {
-		this->key = key;
-		this->data = data;
-		this->color = BLACK;
-		this->lchild = NULL;
-		this->rchild = NULL;
+	RedBlackNode(int newKey, int newData) {
+		this->m_key = newKey;
+		this->m_data = newData;
+		this->m_color = BLACK;
+		this->m_lChild = NULL;
+		this->m_rChild = NULL;
 	}
 
-	void print_node() {
-		cout << "node key : " << key << " / node data : " << data << " / node color : " << color << endl;
+	void PrintNode() {
+		cout << "node newKey : " << m_key << " / node newData : " << m_data << " / node m_color : " << m_color << endl;
 	}
 };
 
-class RedBlackTree : public BST_template<RedBlackNode> {
+class RedBlackTree : public BSTTemplate<RedBlackNode> {
 protected :
 	//삽입 메소드에서 삽입 위치를 찾기 위해 빈 리프노드 자리로 탐색하는 과정에서 매번 호출되는 메소드다.
 	//4노드가 있으면 이를 쪼개놓고 내려가는 로직을 수행한다.
-	void check_and_resolve_4_nodes_while_descent(Stack<RedBlackNode*>* route_stack) {
-		RedBlackNode* target_node = route_stack->pop();
-		RedBlackNode* parent_node = route_stack->pop();
+	void CheckAndResolve4NodesWhileDescent(Stack<RedBlackNode*>* routeStack) {
+		RedBlackNode* targetNode = routeStack->Pop();
+		RedBlackNode* parentNode = routeStack->Pop();
 
-		if (is_4_node(target_node)) {
-			target_node->lchild->color = BLACK;
-			target_node->rchild->color = BLACK;
-			if (parent_node != NULL && parent_node->color == RED) {
-				RedBlackNode* grand_parent_node = route_stack->pop();
-				RedBlackNode* great_grand_parent_node = route_stack->pop();
+		if (Is4Node(targetNode)) {
+			targetNode->m_lChild->m_color = BLACK;
+			targetNode->m_rChild->m_color = BLACK;
+			if (parentNode != NULL && parentNode->m_color == RED) {
+				RedBlackNode* grandParentNode = routeStack->Pop();
+				RedBlackNode* greatGrandParentNode = routeStack->Pop();
 
-				do_proper_rotation(true, target_node, parent_node, grand_parent_node, great_grand_parent_node);
+				DoProperRotation(true, targetNode, parentNode, grandParentNode, greatGrandParentNode);
 
-				if (great_grand_parent_node != NULL) route_stack->push(great_grand_parent_node);
-				route_stack->push(grand_parent_node);
+				if (greatGrandParentNode != NULL) routeStack->Push(greatGrandParentNode);
+				routeStack->Push(grandParentNode);
 			}
-			else split_4_node(target_node);
+			else Split4Node(targetNode);
 		}
 
-		route_stack->push(parent_node);
-		route_stack->push(target_node);
+		routeStack->Push(parentNode);
+		routeStack->Push(targetNode);
 	}
 
-	bool is_4_node(RedBlackNode* target_node) {
-		if (target_node->lchild != NULL && target_node->rchild != NULL) {
-			if (target_node->lchild->color == RED && target_node->rchild->color == RED) {
+	bool Is4Node(RedBlackNode* targetNode) {
+		if (targetNode->m_lChild != NULL && targetNode->m_rChild != NULL) {
+			if (targetNode->m_lChild->m_color == RED && targetNode->m_rChild->m_color == RED) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	void split_4_node(RedBlackNode* target_node) {
-		if (target_node != head) target_node->color = RED;
+	void Split4Node(RedBlackNode* targetNode) {
+		if (targetNode != m_head) targetNode->m_color = RED;
 	}
 
 	//삽입 메소드에서는 빈 리프노드에 레드 노드의 형태로 삽입이 일어난다.
 	//그렇게 삽입이 일어났는데 "조부노드-부모노드-삽입노드"가 "블랙-레드-레드"이렇게 연속적인 레드로 구성될 경우,
 	//이를 확인하고 회전으로 해결하기 위한 메소드다.
-	void check_and_resolve_4_nodes_on_destination(Stack<RedBlackNode*>* route_stack) {
-		RedBlackNode* target_node = route_stack->pop();
-		RedBlackNode* parent_node = route_stack->pop();
+	void CheckAndResolve4NodesOnDestination(Stack<RedBlackNode*>* routeStack) {
+		RedBlackNode* targetNode = routeStack->Pop();
+		RedBlackNode* parentNode = routeStack->Pop();
 
-		if (parent_node->color == RED) {
-			RedBlackNode* grand_parent_node = route_stack->pop();
-			RedBlackNode* great_grand_parent_node = route_stack->pop();
-			do_proper_rotation(true, target_node, parent_node, grand_parent_node, great_grand_parent_node);
+		if (parentNode->m_color == RED) {
+			RedBlackNode* grandParentNode = routeStack->Pop();
+			RedBlackNode* greatGrandParentNode = routeStack->Pop();
+			DoProperRotation(true, targetNode, parentNode, grandParentNode, greatGrandParentNode);
 		}
 	}
 
-	void do_proper_rotation(bool is_double_red, RedBlackNode* target_node, RedBlackNode* parent_node, RedBlackNode* grand_parent_node, RedBlackNode* great_grand_parent_node) {
-		if (great_grand_parent_node == NULL) {
-			select_proper_rotation(is_double_red, target_node, parent_node, head);
+	void DoProperRotation(bool isDoubleRed, RedBlackNode* targetNode, RedBlackNode* parentNode, RedBlackNode* grandParentNode, RedBlackNode* greatGrandParentNode) {
+		if (greatGrandParentNode == NULL) {
+			SelectProperRotation(isDoubleRed, targetNode, parentNode, m_head);
 		}
-		else if (great_grand_parent_node->lchild == grand_parent_node) {
-			select_proper_rotation(is_double_red, target_node, parent_node, great_grand_parent_node->lchild);
+		else if (greatGrandParentNode->m_lChild == grandParentNode) {
+			SelectProperRotation(isDoubleRed, targetNode, parentNode, greatGrandParentNode->m_lChild);
 		}
 		else {
-			select_proper_rotation(is_double_red, target_node, parent_node, great_grand_parent_node->rchild);
+			SelectProperRotation(isDoubleRed, targetNode, parentNode, greatGrandParentNode->m_rChild);
 		}
 	}
 
 	//회전으로 인해 조부 노드의 위치가 변하면, 증조부 노드의 자식 포인터도 그에 맞게 업데이트해줘야 한다.
 	//따라서 조부 노드의 경우에는 단순히 해당 노드의 포인터를 값으로 받아오지 않고, 증조부 노드의 자식 포인터의 레퍼런스 인자로 받아왔다.
-	void select_proper_rotation(bool is_double_red, RedBlackNode* target_node, RedBlackNode* parent_node, RedBlackNode*& grand_parent_node) {
-		if (grand_parent_node->lchild == parent_node) {
-			if (parent_node->lchild == target_node) {
-				LL_rotation(is_double_red, target_node, parent_node, grand_parent_node);
+	void SelectProperRotation(bool isDoubleRed, RedBlackNode* targetNode, RedBlackNode* parentNode, RedBlackNode*& grandParentNode) {
+		if (grandParentNode->m_lChild == parentNode) {
+			if (parentNode->m_lChild == targetNode) {
+				LLRotation(isDoubleRed, targetNode, parentNode, grandParentNode);
 			}
 			else {
-				LR_rotation(is_double_red, target_node, parent_node, grand_parent_node);
+				LRRotation(isDoubleRed, targetNode, parentNode, grandParentNode);
 			}
 		}
 		else {
-			if (parent_node->lchild == target_node) {
-				RL_rotation(is_double_red, target_node, parent_node, grand_parent_node);
+			if (parentNode->m_lChild == targetNode) {
+				RLRotation(isDoubleRed, targetNode, parentNode, grandParentNode);
 			}
 			else {
-				RR_rotation(is_double_red, target_node, parent_node, grand_parent_node);
+				RRRotation(isDoubleRed, targetNode, parentNode, grandParentNode);
 			}
 		}
 	}
 
 	//조부 노드의 인자를 레퍼런스 인자로 받아오는 이유는 위 select_proper_rotation(...)메소드에 기재되어 있다.
-	void LL_rotation(bool is_double_red, RedBlackNode* target_node, RedBlackNode* parent_node, RedBlackNode*& grand_parent_node){
-		if (is_double_red == true) {
-			grand_parent_node->color = RED;
-			parent_node->color = BLACK;
-			target_node->color = RED;
+	void LLRotation(bool isDoubleRed, RedBlackNode* targetNode, RedBlackNode* parentNode, RedBlackNode*& grandParentNode){
+		if (isDoubleRed == true) {
+			grandParentNode->m_color = RED;
+			parentNode->m_color = BLACK;
+			targetNode->m_color = RED;
 		}
 
-		grand_parent_node->lchild = parent_node->rchild;
-		parent_node->rchild = grand_parent_node;
-		grand_parent_node = parent_node;
+		grandParentNode->m_lChild = parentNode->m_rChild;
+		parentNode->m_rChild = grandParentNode;
+		grandParentNode = parentNode;
 	}
 
 	//조부 노드의 인자를 레퍼런스 인자로 받아오는 이유는 위 select_proper_rotation(...)메소드에 기재되어 있다.
-	void LR_rotation(bool is_double_red, RedBlackNode* target_node, RedBlackNode* parent_node, RedBlackNode*& grand_parent_node){
-		grand_parent_node->lchild = target_node;
-		parent_node->rchild = target_node->lchild;
-		target_node->lchild = parent_node;
-		LL_rotation(is_double_red, parent_node, target_node, grand_parent_node);
+	void LRRotation(bool isDoubleRed, RedBlackNode* targetNode, RedBlackNode* parentNode, RedBlackNode*& grandParentNode){
+		grandParentNode->m_lChild = targetNode;
+		parentNode->m_rChild = targetNode->m_lChild;
+		targetNode->m_lChild = parentNode;
+		LLRotation(isDoubleRed, parentNode, targetNode, grandParentNode);
 	}
 
 	//조부 노드의 인자를 레퍼런스 인자로 받아오는 이유는 위 select_proper_rotation(...)메소드에 기재되어 있다.
-	void RL_rotation(bool is_double_red, RedBlackNode* target_node, RedBlackNode* parent_node, RedBlackNode*& grand_parent_node){
-		grand_parent_node->rchild = target_node;
-		parent_node->lchild = target_node->rchild;
-		target_node->rchild = parent_node;
-		RR_rotation(is_double_red, parent_node, target_node, grand_parent_node);
+	void RLRotation(bool isDoubleRed, RedBlackNode* targetNode, RedBlackNode* parentNode, RedBlackNode*& grandParentNode){
+		grandParentNode->m_rChild = targetNode;
+		parentNode->m_lChild = targetNode->m_rChild;
+		targetNode->m_rChild = parentNode;
+		RRRotation(isDoubleRed, parentNode, targetNode, grandParentNode);
 	}
 
 	//조부 노드의 인자를 레퍼런스 인자로 받아오는 이유는 위 select_proper_rotation(...)메소드에 기재되어 있다.
-	void RR_rotation(bool is_double_red, RedBlackNode* target_node, RedBlackNode* parent_node, RedBlackNode*& grand_parent_node){
-		if (is_double_red == true) {
-			grand_parent_node->color = RED;
-			parent_node->color = BLACK;
-			target_node->color = RED;
+	void RRRotation(bool isDoubleRed, RedBlackNode* targetNode, RedBlackNode* parentNode, RedBlackNode*& grandParentNode){
+		if (isDoubleRed == true) {
+			grandParentNode->m_color = RED;
+			parentNode->m_color = BLACK;
+			targetNode->m_color = RED;
 		}
 
-		grand_parent_node->rchild = parent_node->lchild;
-		parent_node->lchild = grand_parent_node;
-		grand_parent_node = parent_node;
+		grandParentNode->m_rChild = parentNode->m_lChild;
+		parentNode->m_lChild = grandParentNode;
+		grandParentNode = parentNode;
 	}
 
 	//삭제 대상이 리프 노드여서 아에 삭제되는 경우,
 	//그 노드를 가리키는 부모노드의 자식 포인터를 null로 해야하기에 레퍼런스 인자를 두었다.
-	void remove_target(RedBlackNode*& target_node, Stack<RedBlackNode*>* route_stack) {
-		if (target_node->lchild != NULL && target_node->rchild != NULL) {				//두 자식 모두 있는 경우엔, 중위선행자와 중위후속자 중에서 그냥 중위후속자(오른쪽 자식 트리에서 제일 작은 키 값의 노드)를 없애기로함
-			replace_with_inorder_successor(target_node, route_stack);
+	void RemoveTarget(RedBlackNode*& targetNode, Stack<RedBlackNode*>* routeStack) {
+		if (targetNode->m_lChild != NULL && targetNode->m_rChild != NULL) {				//두 자식 모두 있는 경우엔, 중위선행자와 중위후속자 중에서 그냥 중위후속자(오른쪽 자식 트리에서 제일 작은 키 값의 노드)를 없애기로함
+			ReplaceWithInorderSuccessor(targetNode, routeStack);
 		}
-		else if (target_node->lchild == NULL && target_node->rchild != NULL) {
-			replace_with_inorder_successor(target_node, route_stack);
+		else if (targetNode->m_lChild == NULL && targetNode->m_rChild != NULL) {
+			ReplaceWithInorderSuccessor(targetNode, routeStack);
 		}
-		else if (target_node->lchild != NULL && target_node->rchild == NULL) {
-			replace_with_inorder_predecessor(target_node, route_stack);
+		else if (targetNode->m_lChild != NULL && targetNode->m_rChild == NULL) {
+			ReplaceWithInorderPredecessor(targetNode, routeStack);
 		}
 		else {																	//자식이 없는 경우에도 블랙 노드 균형을 맞추기 위한 과정이 필요하므로, 중위후속자 대체 메소드를 호출하도록 하자. 중위후속자가 없으므로 target_node의 자리에서 삭제가 일어나지만 균형을 맞추는 과정은 수행할 것이다.
-			replace_with_inorder_successor(target_node, route_stack);
+			ReplaceWithInorderSuccessor(targetNode, routeStack);
 		}
 	}
 
 	//이진탐색트리에서의 replace_with_inorder_predecessor(...)과 차이점은,
 	//중위 선행자나 후속자의 삭제 문제로 대체할 때, 트리의 블랙 노드의 균형이 깨지는 것을 방지하기 위해서 다음을 수행한다는 점이다.
-	void replace_with_inorder_predecessor(RedBlackNode*& target_node, Stack<RedBlackNode*>* route_stack) {
-		if (target_node->lchild != NULL) {
-			RedBlackNode* traverse_ptr = target_node->lchild;
-			route_stack->push(traverse_ptr);
-			while (traverse_ptr->rchild != NULL) {
-				traverse_ptr = traverse_ptr->rchild;
-				route_stack->push(traverse_ptr);
+	void ReplaceWithInorderPredecessor(RedBlackNode*& targetNode, Stack<RedBlackNode*>* routeStack) {
+		if (targetNode->m_lChild != NULL) {
+			RedBlackNode* traversePtr = targetNode->m_lChild;
+			routeStack->Push(traversePtr);
+			while (traversePtr->m_rChild != NULL) {
+				traversePtr = traversePtr->m_rChild;
+				routeStack->Push(traversePtr);
 			}
 		}
 		
-		RedBlackNode* predecessor_node = route_stack->pop();
-		RedBlackNode* parent_of_predecessor = route_stack->pop();
-		RedBlackNode* grand_parent_of_predecessor = route_stack->pop();
-		target_node->key = predecessor_node->key;
-		target_node->data = predecessor_node->data;
+		RedBlackNode* predecessorNode = routeStack->Pop();
+		RedBlackNode* parentOfPredecessor = routeStack->Pop();
+		RedBlackNode* grandParentOfPredecessor = routeStack->Pop();
+		targetNode->m_key = predecessorNode->m_key;
+		targetNode->m_data = predecessorNode->m_data;
 
-		if (parent_of_predecessor == NULL) {	//트리에 헤드 노드만 하나 남은 경우
-			delete head;
-			head = NULL;
+		if (parentOfPredecessor == NULL) {	//트리에 헤드 노드만 하나 남은 경우
+			delete m_head;
+			m_head = NULL;
 			return;
 		}
 
 		//1.중위 선행자나 후속자 자신이 레드 노드인가?
 		// -> 그렇다면 그냥 삭제하면 된다
-		if (predecessor_node->color == RED) {
-			if (parent_of_predecessor->lchild == predecessor_node) parent_of_predecessor->lchild = NULL;
-			else parent_of_predecessor->rchild = NULL;
-			delete predecessor_node;
+		if (predecessorNode->m_color == RED) {
+			if (parentOfPredecessor->m_lChild == predecessorNode) parentOfPredecessor->m_lChild = NULL;
+			else parentOfPredecessor->m_rChild = NULL;
+			delete predecessorNode;
 			return;
 		}
 		//2.위 경우가 아니라면, 중위 선행자나 후속자에게 자식으로 레드 리프 노드가 달려있는가?
 		// -> 그렇다면 중위 선행자나 후속자의 부모에 해당 자식을 붙이며, 해당 빨간 자식 노드의 색깔을 검은색으로 바꾸면 된다
-		if ((predecessor_node->lchild != NULL) && (predecessor_node->lchild->color == RED)) {
-			predecessor_node->key = predecessor_node->lchild->key;
-			predecessor_node->data = predecessor_node->lchild->data;
-			delete predecessor_node->lchild;
-			predecessor_node->lchild == NULL;
+		if ((predecessorNode->m_lChild != NULL) && (predecessorNode->m_lChild->m_color == RED)) {
+			predecessorNode->m_key = predecessorNode->m_lChild->m_key;
+			predecessorNode->m_data = predecessorNode->m_lChild->m_data;
+			delete predecessorNode->m_lChild;
+			predecessorNode->m_lChild == NULL;
 			return;
 		}
 		//3~5. 선행자나 후속자 본인과 그 자식들로는 블랙 노드의 균형을 맞출 수 없다. 부모와 형제자매 노드를 이용해보자.
-		balance_the_black_node_by_family(predecessor_node, parent_of_predecessor, grand_parent_of_predecessor, route_stack);
+		BalanceTheBlackNodeByFamily(predecessorNode, parentOfPredecessor, grandParentOfPredecessor, routeStack);
 		return;
 	}
 
 	//설명은 자식 포인터에 대해서 대칭 관계인 replace_with_inorder_predecessor(..)을 참고
-	void replace_with_inorder_successor(RedBlackNode*& target_node, Stack<RedBlackNode*>* route_stack) {
-		if (target_node->rchild != NULL) {
-			RedBlackNode* traverse_ptr = target_node->rchild;
-			route_stack->push(traverse_ptr);
-			while (traverse_ptr->lchild != NULL) {
-				traverse_ptr = traverse_ptr->lchild;
-				route_stack->push(traverse_ptr);
+	void ReplaceWithInorderSuccessor(RedBlackNode*& targetNode, Stack<RedBlackNode*>* routeStack) {
+		if (targetNode->m_rChild != NULL) {
+			RedBlackNode* traversePtr = targetNode->m_rChild;
+			routeStack->Push(traversePtr);
+			while (traversePtr->m_lChild != NULL) {
+				traversePtr = traversePtr->m_lChild;
+				routeStack->Push(traversePtr);
 			}
 		}
 
-		RedBlackNode* predecessor_node = route_stack->pop();
-		RedBlackNode* parent_of_predecessor = route_stack->pop();
-		RedBlackNode* grand_parent_of_predecessor = route_stack->pop();
-		target_node->key = predecessor_node->key;
-		target_node->data = predecessor_node->data;
+		RedBlackNode* predecessorNode = routeStack->Pop();
+		RedBlackNode* parentOfPredecessor = routeStack->Pop();
+		RedBlackNode* grandParentOfPredecessor = routeStack->Pop();
+		targetNode->m_key = predecessorNode->m_key;
+		targetNode->m_data = predecessorNode->m_data;
 
-		if (parent_of_predecessor == NULL) {	//트리에 헤드 노드만 하나 남은 경우
-			delete head;
-			head = NULL;
+		if (parentOfPredecessor == NULL) {	//트리에 헤드 노드만 하나 남은 경우
+			delete m_head;
+			m_head = NULL;
 			return;
 		}
 
 		//1
-		if (predecessor_node->color == RED) {
-			if (parent_of_predecessor->rchild == predecessor_node) parent_of_predecessor->rchild = NULL;
-			else parent_of_predecessor->lchild = NULL;
-			delete predecessor_node;
+		if (predecessorNode->m_color == RED) {
+			if (parentOfPredecessor->m_rChild == predecessorNode) parentOfPredecessor->m_rChild = NULL;
+			else parentOfPredecessor->m_lChild = NULL;
+			delete predecessorNode;
 			return;
 		}
 		//2
-		if ((predecessor_node->rchild != NULL) && (predecessor_node->rchild->color == RED)) {
-			predecessor_node->key = predecessor_node->rchild->key;
-			predecessor_node->data = predecessor_node->rchild->data;
-			delete predecessor_node->rchild;
-			predecessor_node->rchild == NULL;
+		if ((predecessorNode->m_rChild != NULL) && (predecessorNode->m_rChild->m_color == RED)) {
+			predecessorNode->m_key = predecessorNode->m_rChild->m_key;
+			predecessorNode->m_data = predecessorNode->m_rChild->m_data;
+			delete predecessorNode->m_rChild;
+			predecessorNode->m_rChild == NULL;
 			return;
 		}
 		//3~5
-		if (parent_of_predecessor->lchild == predecessor_node) parent_of_predecessor->lchild = NULL;
-		else parent_of_predecessor->rchild = NULL;
-		delete predecessor_node;
-		balance_the_black_node_by_family(predecessor_node, parent_of_predecessor, grand_parent_of_predecessor, route_stack);
+		if (parentOfPredecessor->m_lChild == predecessorNode) parentOfPredecessor->m_lChild = NULL;
+		else parentOfPredecessor->m_rChild = NULL;
+		delete predecessorNode;
+		BalanceTheBlackNodeByFamily(predecessorNode, parentOfPredecessor, grandParentOfPredecessor, routeStack);
 	}
 
-	void balance_the_black_node_by_family(RedBlackNode* predecessor_node, RedBlackNode* parent_of_predecessor, RedBlackNode* grand_parent_of_predecessor, Stack<RedBlackNode*>* route_stack) {
+	void BalanceTheBlackNodeByFamily(RedBlackNode* predecessorNode, RedBlackNode* parentOfPredecessor, RedBlackNode* grandParentOfPredecessor, Stack<RedBlackNode*>* routeStack) {
 		//3.앞선 경우들도 아니라면, 균형을 맞추기 위해 댕겨올 자매노드의 자식(=조카) 레드노드가 있는가?
 		// -> 그렇다면 회전을 통해서 블랙 노드의 균형을 맞추면 된다. 색깔은 회전 이전에 원래 그 자리에 위치해있던 노드의 색깔을 물려받도록 한다
-		RedBlackNode* brother_node;
-		if (parent_of_predecessor->lchild != NULL && parent_of_predecessor->lchild != predecessor_node) brother_node = parent_of_predecessor->lchild;
-		else if (parent_of_predecessor->rchild != NULL && parent_of_predecessor->rchild != predecessor_node) brother_node = parent_of_predecessor->rchild;
-		else brother_node = NULL;
+		RedBlackNode* brotherNode;
+		if (parentOfPredecessor->m_lChild != NULL && parentOfPredecessor->m_lChild != predecessorNode) brotherNode = parentOfPredecessor->m_lChild;
+		else if (parentOfPredecessor->m_rChild != NULL && parentOfPredecessor->m_rChild != predecessorNode) brotherNode = parentOfPredecessor->m_rChild;
+		else brotherNode = NULL;
 
 
-		if (brother_node != NULL) {
-			if (brother_node->color == RED) {
+		if (brotherNode != NULL) {
+			if (brotherNode->m_color == RED) {
 				//균형 조건에 의하면 무조건 두 개의 검은색 조카 노드가 존재하는 상태이므로, 회전으로 균형을 맞추도록 하자.
 				//LL 회전과 LR 회전 중의 선택, 그리고 RL 회전과 RR 회전 중의 선택은 자유이다. 여기서는 회전 비용이 적은 LL, RR 회전을 택했다.
 				//회전에 택해지지 못한 녀석이 빨간색을 가져가야 한다.
 				//레드 노드가 부모 자식간에 연달아 나타나서 회전하는 것이 아니므로, 회전시 자동으로 색칠을 조정하면 안 되기에 인자로 false로 준다.
-				if (parent_of_predecessor->lchild == brother_node) {
-					brother_node->color = BLACK;
-					brother_node->rchild->color = RED;
-					do_proper_rotation(false, brother_node->lchild, brother_node, parent_of_predecessor, grand_parent_of_predecessor);
+				if (parentOfPredecessor->m_lChild == brotherNode) {
+					brotherNode->m_color = BLACK;
+					brotherNode->m_rChild->m_color = RED;
+					DoProperRotation(false, brotherNode->m_lChild, brotherNode, parentOfPredecessor, grandParentOfPredecessor);
 					return;
 				}
 				else {
-					brother_node->color = BLACK;
-					brother_node->lchild->color = RED;
-					do_proper_rotation(false, brother_node->rchild, brother_node, parent_of_predecessor, grand_parent_of_predecessor);
+					brotherNode->m_color = BLACK;
+					brotherNode->m_lChild->m_color = RED;
+					DoProperRotation(false, brotherNode->m_rChild, brotherNode, parentOfPredecessor, grandParentOfPredecessor);
 					return;
 				}
 			}
-			else if ((brother_node->lchild != NULL) && (brother_node->lchild->color == RED)) {
+			else if ((brotherNode->m_lChild != NULL) && (brotherNode->m_lChild->m_color == RED)) {
 				//레드 노드가 부모 자식간에 연달아 나타나서 회전하는 것이 아니므로, 회전시 자동으로 색칠을 조정하면 안 되기에 인자로 false로 준다.
-				brother_node->lchild->color = BLACK;
-				do_proper_rotation(false, brother_node->lchild, brother_node, parent_of_predecessor, grand_parent_of_predecessor);
+				brotherNode->m_lChild->m_color = BLACK;
+				DoProperRotation(false, brotherNode->m_lChild, brotherNode, parentOfPredecessor, grandParentOfPredecessor);
 				return;
 			}
-			else if ((brother_node->rchild != NULL) && (brother_node->rchild->color == RED)) {
-
+			else if ((brotherNode->m_rChild != NULL) && (brotherNode->m_rChild->m_color == RED)) {
 				//레드 노드가 부모 자식간에 연달아 나타나서 회전하는 것이 아니므로, 회전시 자동으로 색칠을 조정하면 안 되기에 인자로 false로 준다.
-				brother_node->rchild->color = BLACK;
-				do_proper_rotation(false, brother_node->rchild, brother_node, parent_of_predecessor, grand_parent_of_predecessor);
+				brotherNode->m_rChild->m_color = BLACK;
+				DoProperRotation(false, brotherNode->m_rChild, brotherNode, parentOfPredecessor, grandParentOfPredecessor);
 				return;
 			}
 		}
 
 		//4.위 경우도 아니라면, 부모노드가 레드노드인가?
 		// -> 부모노드는 블랙노드가 되도록 하고, 자매 노드가 있으면 레드 노드가 되도록 하여 균형을 맞추자
-		if (parent_of_predecessor->color == RED) {
-			parent_of_predecessor->color = BLACK;
-			if(brother_node != NULL) brother_node->color = RED;
+		if (parentOfPredecessor->m_color == RED) {
+			parentOfPredecessor->m_color = BLACK;
+			if(brotherNode != NULL) brotherNode->m_color = RED;
 			return;
 		}
 
 
 		//5.위 경우도 아니라면
 		// -> 자매 노드가 있으면 레드 노드가 되도록 하자. 그리고 부모노드 위치의 삭제 문제로 변환하여 다시 3번부터 수행하도록 하자
-		if (brother_node != NULL) brother_node->color = RED;
+		if (brotherNode != NULL) brotherNode->m_color = RED;
 
-		if (grand_parent_of_predecessor != NULL) {
-			predecessor_node = parent_of_predecessor;
-			parent_of_predecessor = grand_parent_of_predecessor;
-			grand_parent_of_predecessor = route_stack->pop();
+		if (grandParentOfPredecessor != NULL) {
+			predecessorNode = parentOfPredecessor;
+			parentOfPredecessor = grandParentOfPredecessor;
+			grandParentOfPredecessor = routeStack->Pop();
 
-			balance_the_black_node_by_family(predecessor_node, parent_of_predecessor, grand_parent_of_predecessor, route_stack);
+			BalanceTheBlackNodeByFamily(predecessorNode, parentOfPredecessor, grandParentOfPredecessor, routeStack);
 		}
 
 		return;
@@ -345,90 +344,90 @@ protected :
 
 
 public :
-	RedBlackTree() : BST_template() {}
+	RedBlackTree() : BSTTemplate() {}
 
-	void insert(int new_key, int new_data) {
-		if (head == NULL) {
-			head = new RedBlackNode(new_key, new_data);
+	void Insert(int newKey, int newData) {
+		if (m_head == NULL) {
+			m_head = new RedBlackNode(newKey, newData);
 			return;
 		}
 
-		RedBlackNode* traverse_ptr = head;
-		Stack<RedBlackNode*> route_stack;
+		RedBlackNode* traversePtr = m_head;
+		Stack<RedBlackNode*> routeStack;
 		while (true) {
-			route_stack.push(traverse_ptr);
-			check_and_resolve_4_nodes_while_descent(&route_stack);
+			routeStack.Push(traversePtr);
+			CheckAndResolve4NodesWhileDescent(&routeStack);
 
-			if (new_key < traverse_ptr->key) {
-				if (traverse_ptr->lchild != NULL) {
-					traverse_ptr = traverse_ptr->lchild;
+			if (newKey < traversePtr->m_key) {
+				if (traversePtr->m_lChild != NULL) {
+					traversePtr = traversePtr->m_lChild;
 				}
 				else {
-					traverse_ptr->lchild = new RedBlackNode(new_key, new_data);
-					traverse_ptr->lchild->color = RED;
-					route_stack.push(traverse_ptr->lchild);
-					check_and_resolve_4_nodes_on_destination(&route_stack);
+					traversePtr->m_lChild = new RedBlackNode(newKey, newData);
+					traversePtr->m_lChild->m_color = RED;
+					routeStack.Push(traversePtr->m_lChild);
+					CheckAndResolve4NodesOnDestination(&routeStack);
 					return;
 				}
 			}
-			else if (traverse_ptr->key < new_key) {
-				if (traverse_ptr->rchild != NULL) {
-					traverse_ptr = traverse_ptr->rchild;
+			else if (traversePtr->m_key < newKey) {
+				if (traversePtr->m_rChild != NULL) {
+					traversePtr = traversePtr->m_rChild;
 				}
 				else {
-					traverse_ptr->rchild = new RedBlackNode(new_key, new_data);
-					traverse_ptr->rchild->color = RED;
-					route_stack.push(traverse_ptr->rchild);
-					check_and_resolve_4_nodes_on_destination(&route_stack);
+					traversePtr->m_rChild = new RedBlackNode(newKey, newData);
+					traversePtr->m_rChild->m_color = RED;
+					routeStack.Push(traversePtr->m_rChild);
+					CheckAndResolve4NodesOnDestination(&routeStack);
 					return;
 				}
 			}
 			else {
-				cout << "Cannot insert node to tree! There are same key node already!" << endl;
+				cout << "Cannot Insert node to tree! There are same newKey node already!" << endl;
 				return;
 			}
 		}
 	}
 
-	void remove(int target_key) {
-		Stack<RedBlackNode*> route_stack;
+	void Remove(int targetKey) {
+		Stack<RedBlackNode*> routeStack;
 
-		if (head->key == target_key) {
-			route_stack.push(head);
-			remove_target(head, &route_stack);
+		if (m_head->m_key == targetKey) {
+			routeStack.Push(m_head);
+			RemoveTarget(m_head, &routeStack);
 			return;
-		} 
+		}
 
-		RedBlackNode* traverse_ptr = head;
+		RedBlackNode* traversePtr = m_head;
 		while (true) {
-			if (target_key < traverse_ptr->key) {
-				if (traverse_ptr->lchild != NULL) {
-					route_stack.push(traverse_ptr);
-					traverse_ptr = traverse_ptr->lchild;
+			if (targetKey < traversePtr->m_key) {
+				if (traversePtr->m_lChild != NULL) {
+					routeStack.Push(traversePtr);
+					traversePtr = traversePtr->m_lChild;
 				}
 				else {
-					cout << "Cannot remove! Cannot find such target node!" << endl;
+					cout << "Cannot Remove! Cannot find such target node!" << endl;
 					return;
 				}
 			}
-			else if (traverse_ptr->key < target_key) {
-				if (traverse_ptr->rchild != NULL) {
-					route_stack.push(traverse_ptr);
-					traverse_ptr = traverse_ptr->rchild;
+			else if (traversePtr->m_key < targetKey) {
+				if (traversePtr->m_rChild != NULL) {
+					routeStack.Push(traversePtr);
+					traversePtr = traversePtr->m_rChild;
 				}
 				else {
-					cout << "Cannot remove! Cannot find such target node!" << endl;
+					cout << "Cannot Remove! Cannot find such target node!" << endl;
 					return;
 				}
 			}
 			else {
-				RedBlackNode* parent = route_stack.get_top();
-				route_stack.push(traverse_ptr);
-				if (parent->lchild = traverse_ptr) {
-					remove_target(parent->lchild, &route_stack);
+				RedBlackNode* parent = routeStack.GetTop();
+				routeStack.Push(traversePtr);
+				if (parent->m_lChild = traversePtr) {
+					RemoveTarget(parent->m_lChild, &routeStack);
 				}
 				else {
-					remove_target(parent->rchild, &route_stack);
+					RemoveTarget(parent->m_rChild, &routeStack);
 				}
 				return;
 			}
