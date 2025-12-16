@@ -1,49 +1,49 @@
 #include "red_black_tree.h"
 
 int main() {
-	RedBlackTree& test_tree = *(new RedBlackTree());
-	test_tree.insert(5, 55);
-	test_tree.insert(9, 99);
-	test_tree.insert(8, 88);
-	test_tree.insert(6, 66);
-	test_tree.insert(7, 77);
-	test_tree.insert(1, 11);
-	test_tree.insert(2, 22);
-	test_tree.insert(3, 33);
-	test_tree.insert(4, 44);
-	test_tree.preorder_print();
+	RedBlackTree& testTree = *(new RedBlackTree());
+	testTree.Insert(5, 55);
+	testTree.Insert(9, 99);
+	testTree.Insert(8, 88);
+	testTree.Insert(6, 66);
+	testTree.Insert(7, 77);
+	testTree.Insert(1, 11);
+	testTree.Insert(2, 22);
+	testTree.Insert(3, 33);
+	testTree.Insert(4, 44);
+	testTree.PreorderPrint();
 
-	RedBlackTree& copied_test_tree = *(new RedBlackTree());
-	copied_test_tree.copy_from(&test_tree);
-	copied_test_tree.preorder_print();
+	RedBlackTree& copiedTestTree = *(new RedBlackTree());
+	copiedTestTree.CopyFrom(&testTree);
+	copiedTestTree.PreorderPrint();
 
-	test_tree.remove(1);
-	test_tree.preorder_print();
+	testTree.Remove(1);
+	testTree.PreorderPrint();
 
-	test_tree.remove(2);
-	test_tree.preorder_print();
+	testTree.Remove(2);
+	testTree.PreorderPrint();
 
-	test_tree.remove(3);
-	test_tree.preorder_print();
+	testTree.Remove(3);
+	testTree.PreorderPrint();
 
-	test_tree.remove(4);
-	test_tree.preorder_print();
+	testTree.Remove(4);
+	testTree.PreorderPrint();
 
-	test_tree.remove(5);
-	test_tree.preorder_print();
+	testTree.Remove(5);
+	testTree.PreorderPrint();
 
-	test_tree.remove(6);
-	test_tree.preorder_print();
+	testTree.Remove(6);
+	testTree.PreorderPrint();
 
-	test_tree.remove(7);
-	test_tree.preorder_print();
+	testTree.Remove(7);
+	testTree.PreorderPrint();
 
-	test_tree.remove(8);
-	test_tree.preorder_print();
+	testTree.Remove(8);
+	testTree.PreorderPrint();
 
-	test_tree.remove(9);
-	test_tree.preorder_print();
+	testTree.Remove(9);
+	testTree.PreorderPrint();
 
-	delete& test_tree;
+	delete& testTree;
 	return 0;
 }
