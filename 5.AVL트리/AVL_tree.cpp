@@ -1,241 +1,241 @@
 #include"AVL_tree.h"
-	void AVL_tree::remove_target(AVL_node*& target_ptr, Stack<AVL_node*>* ancester_node_stack) {
-		if (target_ptr->lchild != NULL && target_ptr->rchild != NULL) {				//두 자식 모두 있는 경우엔, 중위선행자와 중위후속자 중에서 그냥 중위후속자(오른쪽 자식 트리에서 제일 작은 키 값의 노드)를 없애기로함
-			replace_with_inorder_successor(target_ptr, ancester_node_stack);
+	void AVL_tree::RemoveTarget(AVLNode*& targetPtr, Stack<AVLNode*>* ancesterNodeStack) {
+		if (targetPtr->m_lChild != NULL && targetPtr->m_rChild != NULL) {				//두 자식 모두 있는 경우엔, 중위선행자와 중위후속자 중에서 그냥 중위후속자(오른쪽 자식 트리에서 제일 작은 키 값의 노드)를 없애기로함
+			ReplaceWithInorderSuccessor(targetPtr, ancesterNodeStack);
 		}
-		else if (target_ptr->lchild == NULL && target_ptr->rchild != NULL) {
-			replace_with_inorder_successor(target_ptr, ancester_node_stack);
+		else if (targetPtr->m_lChild == NULL && targetPtr->m_rChild != NULL) {
+			ReplaceWithInorderSuccessor(targetPtr, ancesterNodeStack);
 		}
-		else if (target_ptr->lchild != NULL && target_ptr->rchild == NULL) {
-			replace_with_inorder_predecessor(target_ptr, ancester_node_stack);
+		else if (targetPtr->m_lChild != NULL && targetPtr->m_rChild == NULL) {
+			ReplaceWithInorderPredecessor(targetPtr, ancesterNodeStack);
 		}
 		else {
-			delete target_ptr;
-			target_ptr = NULL;
+			delete targetPtr;
+			targetPtr = NULL;
 		}
-		balancing_all_target_to_root(ancester_node_stack);
+		BalancingAllTargetToRoot(ancesterNodeStack);
 	}
 
-	void AVL_tree::replace_with_inorder_predecessor(AVL_node * &target_ptr, Stack<AVL_node*>*ancester_node_stack) {
-		AVL_node* previous_ptr = NULL;
-		AVL_node* traverse_ptr = target_ptr->lchild;
-		ancester_node_stack->push(target_ptr);
-		while (traverse_ptr->rchild != NULL) {
-			previous_ptr = traverse_ptr;
-			traverse_ptr = traverse_ptr->rchild;
-			ancester_node_stack->push(previous_ptr);
+	void AVL_tree::ReplaceWithInorderPredecessor(AVLNode * &targetPtr, Stack<AVLNode*>*ancesterNodeStack) {
+		AVLNode* previousPtr = NULL;
+		AVLNode* traversePtr = targetPtr->m_lChild;
+		ancesterNodeStack->Push(targetPtr);
+		while (traversePtr->m_rChild != NULL) {
+			previousPtr = traversePtr;
+			traversePtr = traversePtr->m_rChild;
+			ancesterNodeStack->Push(previousPtr);
 		}
-		if (previous_ptr != NULL) previous_ptr->rchild = traverse_ptr->lchild;
-		else target_ptr->lchild = traverse_ptr->lchild;
-		target_ptr->key = traverse_ptr->key;
-		target_ptr->data = traverse_ptr->data;
-		delete traverse_ptr;
+		if (previousPtr != NULL) previousPtr->m_rChild = traversePtr->m_lChild;
+		else targetPtr->m_lChild = traversePtr->m_lChild;
+		targetPtr->m_key = traversePtr->m_key;
+		targetPtr->m_data = traversePtr->m_data;
+		delete traversePtr;
 	}
 
-	void AVL_tree::replace_with_inorder_successor(AVL_node * &target_ptr, Stack<AVL_node*>*ancester_node_stack) {
-		AVL_node* previous_ptr = NULL;
-		AVL_node* traverse_ptr = target_ptr->rchild;
-		ancester_node_stack->push(target_ptr);
-		while (traverse_ptr->lchild != NULL) {
-			previous_ptr = traverse_ptr;
-			traverse_ptr = traverse_ptr->lchild;
-			ancester_node_stack->push(previous_ptr);
+	void AVL_tree::ReplaceWithInorderSuccessor(AVLNode * &targetPtr, Stack<AVLNode*>*ancesterNodeStack) {
+		AVLNode* previousPtr = NULL;
+		AVLNode* traversePtr = targetPtr->m_rChild;
+		ancesterNodeStack->Push(targetPtr);
+		while (traversePtr->m_lChild != NULL) {
+			previousPtr = traversePtr;
+			traversePtr = traversePtr->m_lChild;
+			ancesterNodeStack->Push(previousPtr);
 		}
-		if (previous_ptr != NULL) previous_ptr->lchild = traverse_ptr->rchild;
-		else target_ptr->rchild = traverse_ptr->rchild;
-		target_ptr->key = traverse_ptr->key;
-		target_ptr->data = traverse_ptr->data;
-		delete traverse_ptr;
+		if (previousPtr != NULL) previousPtr->m_lChild = traversePtr->m_rChild;
+		else targetPtr->m_rChild = traversePtr->m_rChild;
+		targetPtr->m_key = traversePtr->m_key;
+		targetPtr->m_data = traversePtr->m_data;
+		delete traversePtr;
 	}
 
-	void AVL_tree::balancing_all_target_to_root(Stack<AVL_node*>*ancester_node_stack) {
-		while (ancester_node_stack->is_empty() == false) {
-			AVL_node* retraverse_node = ancester_node_stack->pop();
-			AVL_node* parent_of_retraverse_node = ancester_node_stack->get_top();
-			update_height(retraverse_node);
-			cout << "node's height : " << retraverse_node->height_from_leaf << endl;	//debug
-			balancing_target_node(retraverse_node, parent_of_retraverse_node);
+	void AVL_tree::BalancingAllTargetToRoot(Stack<AVLNode*>*ancesterNodeStack) {
+		while (ancesterNodeStack->IsEmpty() == false) {
+			AVLNode* retraverseNode = ancesterNodeStack->Pop();
+			AVLNode* parentOfRetraverseNode = ancesterNodeStack->GetTop();
+			UpdateHeight(retraverseNode);
+			cout << "node's height : " << retraverseNode->m_heightFromLeaf << endl;	//debug
+			BalancingTargetNode(retraverseNode, parentOfRetraverseNode);
 		}
 	}
 
-	void AVL_tree::balancing_target_node(AVL_node * target_node, AVL_node * parent_node) {
-		int left_height = 0;
-		int right_height = 0;
-		if (target_node->lchild != NULL) left_height = 1 + target_node->lchild->height_from_leaf;
-		if (target_node->rchild != NULL) right_height = 1 + target_node->rchild->height_from_leaf;
+	void AVL_tree::BalancingTargetNode(AVLNode * targetNode, AVLNode * parentNode) {
+		int leftHeight = 0;
+		int rightHeight = 0;
+		if (targetNode->m_lChild != NULL) leftHeight = 1 + targetNode->m_lChild->m_heightFromLeaf;
+		if (targetNode->m_rChild != NULL) rightHeight = 1 + targetNode->m_rChild->m_heightFromLeaf;
 
-		if (left_height - right_height >= 2) {
-			if (target_node->lchild->rchild == NULL) {
-				LL_rotation(target_node, parent_node);
+		if (leftHeight - rightHeight >= 2) {
+			if (targetNode->m_lChild->m_rChild == NULL) {
+				LLRotation(targetNode, parentNode);
 			}
-			else if (target_node->lchild->lchild == NULL) {
-				LR_rotation(target_node, parent_node);
+			else if (targetNode->m_lChild->m_lChild == NULL) {
+				LRRotation(targetNode, parentNode);
 			}
 			else {
-				if (target_node->lchild->lchild->height_from_leaf > target_node->lchild->rchild->height_from_leaf) {
-					LL_rotation(target_node, parent_node);
+				if (targetNode->m_lChild->m_lChild->m_heightFromLeaf > targetNode->m_lChild->m_rChild->m_heightFromLeaf) {
+					LLRotation(targetNode, parentNode);
 				}
 				else {
-					LR_rotation(target_node, parent_node);
+					LRRotation(targetNode, parentNode);
 				}
 			}
 		}
-		else if (right_height - left_height >= 2) {
-			if (target_node->rchild->rchild == NULL) {
-				RL_rotation(target_node, parent_node);
+		else if (rightHeight - leftHeight >= 2) {
+			if (targetNode->m_rChild->m_rChild == NULL) {
+				RLRotation(targetNode, parentNode);
 			}
-			else if (target_node->rchild->lchild == NULL) {
-				RR_rotation(target_node, parent_node);
+			else if (targetNode->m_rChild->m_lChild == NULL) {
+				RRRotation(targetNode, parentNode);
 			}
 			else {
-				if (target_node->rchild->lchild->height_from_leaf > target_node->rchild->rchild->height_from_leaf) {
-					RL_rotation(target_node, parent_node);
+				if (targetNode->m_rChild->m_lChild->m_heightFromLeaf > targetNode->m_rChild->m_rChild->m_heightFromLeaf) {
+					RLRotation(targetNode, parentNode);
 				}
 				else {
-					RR_rotation(target_node, parent_node);
+					RRRotation(targetNode, parentNode);
 				}
 			}
 		}
 	}
 
-	void AVL_tree::LL_rotation(AVL_node * target_node, AVL_node * parent_node) {
+	void AVL_tree::LLRotation(AVLNode * targetNode, AVLNode * parentNode) {
 		cout << "LL 회전" << endl;
-		if (parent_node == NULL) {
-			head = target_node->lchild;
-			target_node->lchild = target_node->lchild->rchild;
-			head->rchild = target_node;
-			head->height_from_leaf = target_node->height_from_leaf - 1;
+		if (parentNode == NULL) {
+			m_head = targetNode->m_lChild;
+			targetNode->m_lChild = targetNode->m_lChild->m_rChild;
+			m_head->m_rChild = targetNode;
+			m_head->m_heightFromLeaf = targetNode->m_heightFromLeaf - 1;
 		}
-		else if (parent_node->lchild == target_node) {
-			parent_node->lchild = target_node->lchild;
-			target_node->lchild = target_node->lchild->rchild;
-			parent_node->lchild->rchild = target_node;
-			parent_node->lchild->height_from_leaf = target_node->height_from_leaf - 1;
+		else if (parentNode->m_lChild == targetNode) {
+			parentNode->m_lChild = targetNode->m_lChild;
+			targetNode->m_lChild = targetNode->m_lChild->m_rChild;
+			parentNode->m_lChild->m_rChild = targetNode;
+			parentNode->m_lChild->m_heightFromLeaf = targetNode->m_heightFromLeaf - 1;
 		}
 		else {
-			parent_node->rchild = target_node->lchild;
-			target_node->lchild = target_node->lchild->rchild;
-			parent_node->rchild->rchild = target_node;
-			parent_node->rchild->height_from_leaf = target_node->height_from_leaf - 1;
+			parentNode->m_rChild = targetNode->m_lChild;
+			targetNode->m_lChild = targetNode->m_lChild->m_rChild;
+			parentNode->m_rChild->m_rChild = targetNode;
+			parentNode->m_rChild->m_heightFromLeaf = targetNode->m_heightFromLeaf - 1;
 		}
 
-		update_height(target_node);
+		UpdateHeight(targetNode);
 	}
 
-	void AVL_tree::LR_rotation(AVL_node * target_node, AVL_node * parent_node) {
+	void AVL_tree::LRRotation(AVLNode * targetNode, AVLNode * parentNode) {
 		cout << "LR 회전" << endl;
-		AVL_node* LR_location = target_node->lchild->rchild;
-		target_node->lchild->rchild = LR_location->lchild;
-		LR_location->lchild = target_node->lchild;
-		target_node->lchild = LR_location;
-		update_height(LR_location->lchild);
-		update_height(LR_location);
-		update_height(target_node);
-		LL_rotation(target_node, parent_node);
+		AVLNode* LRLocation = targetNode->m_lChild->m_rChild;
+		targetNode->m_lChild->m_rChild = LRLocation->m_lChild;
+		LRLocation->m_lChild = targetNode->m_lChild;
+		targetNode->m_lChild = LRLocation;
+		UpdateHeight(LRLocation->m_lChild);
+		UpdateHeight(LRLocation);
+		UpdateHeight(targetNode);
+		LLRotation(targetNode, parentNode);
 	}
 
-	void AVL_tree::RL_rotation(AVL_node * target_node, AVL_node * parent_node) {
+	void AVL_tree::RLRotation(AVLNode * targetNode, AVLNode * parentNode) {
 		cout << "RL 회전" << endl;
-		AVL_node* RL_location = target_node->rchild->lchild;
-		target_node->rchild->lchild = RL_location->rchild;
-		RL_location->rchild = target_node->rchild;
-		target_node->rchild = RL_location;
-		update_height(RL_location->rchild);
-		update_height(RL_location);
-		update_height(target_node);
-		RR_rotation(target_node, parent_node);
+		AVLNode* RLLocation = targetNode->m_rChild->m_lChild;
+		targetNode->m_rChild->m_lChild = RLLocation->m_rChild;
+		RLLocation->m_rChild = targetNode->m_rChild;
+		targetNode->m_rChild = RLLocation;
+		UpdateHeight(RLLocation->m_rChild);
+		UpdateHeight(RLLocation);
+		UpdateHeight(targetNode);
+		RRRotation(targetNode, parentNode);
 	}
 
-	void AVL_tree::RR_rotation(AVL_node * target_node, AVL_node * parent_node) {
+	void AVL_tree::RRRotation(AVLNode * targetNode, AVLNode * parentNode) {
 		cout << "RR 회전" << endl;
-		if (parent_node == NULL) {
-			head = target_node->rchild;
-			target_node->rchild = target_node->rchild->lchild;
-			head->lchild = target_node;
-			head->height_from_leaf = target_node->height_from_leaf - 1;
+		if (parentNode == NULL) {
+			m_head = targetNode->m_rChild;
+			targetNode->m_rChild = targetNode->m_rChild->m_lChild;
+			m_head->m_lChild = targetNode;
+			m_head->m_heightFromLeaf = targetNode->m_heightFromLeaf - 1;
 		}
-		else if (parent_node->lchild == target_node) {
-			parent_node->lchild = target_node->rchild;
-			target_node->rchild = target_node->rchild->lchild;
-			parent_node->lchild->lchild = target_node;
-			parent_node->lchild->height_from_leaf = target_node->height_from_leaf - 1;
+		else if (parentNode->m_lChild == targetNode) {
+			parentNode->m_lChild = targetNode->m_rChild;
+			targetNode->m_rChild = targetNode->m_rChild->m_lChild;
+			parentNode->m_lChild->m_lChild = targetNode;
+			parentNode->m_lChild->m_heightFromLeaf = targetNode->m_heightFromLeaf - 1;
 		}
 		else {
-			parent_node->rchild = target_node->rchild;
-			target_node->rchild = target_node->rchild->lchild;
-			parent_node->rchild->lchild = target_node;
-			parent_node->rchild->height_from_leaf = target_node->height_from_leaf - 1;
+			parentNode->m_rChild = targetNode->m_rChild;
+			targetNode->m_rChild = targetNode->m_rChild->m_lChild;
+			parentNode->m_rChild->m_lChild = targetNode;
+			parentNode->m_rChild->m_heightFromLeaf = targetNode->m_heightFromLeaf - 1;
 		}
-		update_height(target_node);
+		UpdateHeight(targetNode);
 	}
 
 
-	void AVL_tree::insert(int new_key, int new_data) {
-		if (head == NULL) {
-			head = new AVL_node(new_key, new_data);
+	void AVL_tree::Insert(int newKey, int newData) {
+		if (m_head == NULL) {
+			m_head = new AVLNode(newKey, newData);
 			return;
 		}
 
-		AVL_node* traverse_ptr = head;
-		Stack<AVL_node*> ancester_node_stack;
+		AVLNode* traversePtr = m_head;
+		Stack<AVLNode*> ancesterNodeStack;
 		while (true) {
-			if (new_key < traverse_ptr->key) {
-				if (traverse_ptr->lchild == NULL) {
-					traverse_ptr->lchild = new AVL_node(new_key, new_data);
-					ancester_node_stack.push(traverse_ptr);
-					balancing_all_target_to_root(&ancester_node_stack);
+			if (newKey < traversePtr->m_key) {
+				if (traversePtr->m_lChild == NULL) {
+					traversePtr->m_lChild = new AVLNode(newKey, newData);
+					ancesterNodeStack.Push(traversePtr);
+					BalancingAllTargetToRoot(&ancesterNodeStack);
 					return;
 				}
 				else {
-					ancester_node_stack.push(traverse_ptr);
-					traverse_ptr = traverse_ptr->lchild;
+					ancesterNodeStack.Push(traversePtr);
+					traversePtr = traversePtr->m_lChild;
 				}
 			}
 			else {
-				if (traverse_ptr->rchild == NULL) {
-					traverse_ptr->rchild = new AVL_node(new_key, new_data);
-					ancester_node_stack.push(traverse_ptr);
-					balancing_all_target_to_root(&ancester_node_stack);
+				if (traversePtr->m_rChild == NULL) {
+					traversePtr->m_rChild = new AVLNode(newKey, newData);
+					ancesterNodeStack.Push(traversePtr);
+					BalancingAllTargetToRoot(&ancesterNodeStack);
 					return;
 				}
 				else {
-					ancester_node_stack.push(traverse_ptr);
-					traverse_ptr = traverse_ptr->rchild;
+					ancesterNodeStack.Push(traversePtr);
+					traversePtr = traversePtr->m_rChild;
 				}
 			}
 		}
 	}
 
-	void AVL_tree::remove(int target_key) {
-		if (head == NULL) {
-			cout << "Cannot remove! tree is emptied" << endl;
+	void AVL_tree::Remove(int targetKey) {
+		if (m_head == NULL) {
+			cout << "Cannot Remove! tree is emptied" << endl;
 			return;
 		}
 
-		Stack<AVL_node*> ancester_node_stack;
+		Stack<AVLNode*> ancesterNodeStack;
 
-		if (head->key == target_key) {
-			remove_target(head, &ancester_node_stack);
+		if (m_head->m_key == targetKey) {
+			RemoveTarget(m_head, &ancesterNodeStack);
 			return;
 		}
 
-		AVL_node* traverse_ptr = head;
+		AVLNode* traversePtr = m_head;
 		while (true) {
-			if (target_key < traverse_ptr->key) {
-				ancester_node_stack.push(traverse_ptr);
-				if (traverse_ptr->lchild->key == target_key) {
-					remove_target(traverse_ptr->lchild, &ancester_node_stack);
+			if (targetKey < traversePtr->m_key) {
+				ancesterNodeStack.Push(traversePtr);
+				if (traversePtr->m_lChild->m_key == targetKey) {
+					RemoveTarget(traversePtr->m_lChild, &ancesterNodeStack);
 					return;
 				}
-				else traverse_ptr = traverse_ptr->lchild;
+				else traversePtr = traversePtr->m_lChild;
 			}
 			else {
-				ancester_node_stack.push(traverse_ptr);
-				if (traverse_ptr->rchild->key == target_key) {
-					remove_target(traverse_ptr->rchild, &ancester_node_stack);
+				ancesterNodeStack.Push(traversePtr);
+				if (traversePtr->m_rChild->m_key == targetKey) {
+					RemoveTarget(traversePtr->m_rChild, &ancesterNodeStack);
 					return;
 				}
-				else traverse_ptr = traverse_ptr->rchild;
+				else traversePtr = traversePtr->m_rChild;
 			}
 		}
 	}
