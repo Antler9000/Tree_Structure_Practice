@@ -1,35 +1,36 @@
 #include "BST_using_recurse.h"
 
-int main() {
-	BST test_BST;
-	test_BST.Insert(5, 1515);
-	test_BST.Insert(7, 2727);
-	test_BST.Insert(3, 1313);
-	test_BST.Insert(4, 2424);
-	test_BST.Insert(6, 3636);
-	test_BST.PreorderPrint();
+int main()
+{
+	BST testBST;
+	testBST.Insert(5, 1515);
+	testBST.Insert(7, 2727);
+	testBST.Insert(3, 1313);
+	testBST.Insert(4, 2424);
+	testBST.Insert(6, 3636);
+	testBST.PreorderPrint();
 
 	BST copied_BST;
-	copied_BST.CopyFrom(&test_BST);
+	copied_BST.CopyFrom(&testBST);
 	copied_BST.PreorderPrint();
 
-	test_BST.Remove(7);
-	test_BST.PreorderPrint();
+	testBST.Remove(7);
+	testBST.PreorderPrint();
 
-	test_BST.Remove(5);
-	test_BST.PreorderPrint();
+	testBST.Remove(5);
+	testBST.PreorderPrint();
 
-	test_BST.Remove(6);
-	test_BST.PreorderPrint();
+	testBST.Remove(6);
+	testBST.PreorderPrint();
 
-	test_BST.Remove(4);
-	test_BST.PreorderPrint();
+	testBST.Remove(4);
+	testBST.PreorderPrint();
 
-	test_BST.Remove(3);
-	test_BST.PreorderPrint();
+	testBST.Remove(3);
+	testBST.PreorderPrint();
 
-	test_BST.RemoveAll();
-	test_BST.PreorderPrint();
+	testBST.RemoveAll();
+	testBST.PreorderPrint();
 
 	return 0;
 }

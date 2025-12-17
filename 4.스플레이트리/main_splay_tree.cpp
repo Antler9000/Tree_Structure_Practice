@@ -1,66 +1,68 @@
 #include "splay_tree.h"
 
-int main() {
-	SplayTree& test_tree = *(new SplayTree());
-	test_tree.Insert(5, 1515);
-	test_tree.Insert(7, 2727);
-	test_tree.Insert(3, 1313);
-	test_tree.Insert(4, 2424);
-	test_tree.Insert(6, 3636);
-	test_tree.Insert(1, 5151);
-	test_tree.Insert(8, 5858);
-	test_tree.PreorderPrint();
+int main()
+{
+	SplayTree& testTree = *(new SplayTree());
+
+	testTree.Insert(5, 1515);
+	testTree.Insert(7, 2727);
+	testTree.Insert(3, 1313);
+	testTree.Insert(4, 2424);
+	testTree.Insert(6, 3636);
+	testTree.Insert(1, 5151);
+	testTree.Insert(8, 5858);
+	testTree.PreorderPrint();
 
 	cout << "Retrieve test 8" << endl;
-	test_tree.Retrieve(8);
-	test_tree.PreorderPrint();
+	testTree.Retrieve(8);
+	testTree.PreorderPrint();
 
 	cout << "Retrieve test 4" << endl;
-	test_tree.Retrieve(4);
-	test_tree.PreorderPrint();
+	testTree.Retrieve(4);
+	testTree.PreorderPrint();
 
 	cout << "Retrieve test 3" << endl;
-	test_tree.Retrieve(3);
-	test_tree.PreorderPrint();
+	testTree.Retrieve(3);
+	testTree.PreorderPrint();
 
 	cout << "Retrieve test 3" << endl;
-	test_tree.Retrieve(3);
-	test_tree.PreorderPrint();
+	testTree.Retrieve(3);
+	testTree.PreorderPrint();
 
 	cout << "Retrieve test 7" << endl;
-	test_tree.Retrieve(7);
-	test_tree.PreorderPrint();
+	testTree.Retrieve(7);
+	testTree.PreorderPrint();
 
 	cout << "Retrieve test 5" << endl;
-	test_tree.Retrieve(5);
-	test_tree.PreorderPrint();
+	testTree.Retrieve(5);
+	testTree.PreorderPrint();
 
 
 	SplayTree& copied_test_tree = *(new SplayTree());
-	copied_test_tree.CopyFrom(&test_tree);
+	copied_test_tree.CopyFrom(&testTree);
 	copied_test_tree.PreorderPrint();
 
-	test_tree.Remove(7);
-	test_tree.PreorderPrint();
+	testTree.Remove(7);
+	testTree.PreorderPrint();
 
-	test_tree.Remove(3);
-	test_tree.PreorderPrint();
+	testTree.Remove(3);
+	testTree.PreorderPrint();
 
-	test_tree.Remove(5);
-	test_tree.PreorderPrint();
+	testTree.Remove(5);
+	testTree.PreorderPrint();
 
-	test_tree.Remove(4);
-	test_tree.PreorderPrint();
+	testTree.Remove(4);
+	testTree.PreorderPrint();
 
-	test_tree.Remove(6);
-	test_tree.PreorderPrint();
+	testTree.Remove(6);
+	testTree.PreorderPrint();
 
-	test_tree.Remove(1);
-	test_tree.PreorderPrint();
+	testTree.Remove(1);
+	testTree.PreorderPrint();
 
-	test_tree.Remove(8);
-	test_tree.PreorderPrint();
+	testTree.Remove(8);
+	testTree.PreorderPrint();
 
-	delete& test_tree;
+	delete& testTree;
 	return 0;
 }

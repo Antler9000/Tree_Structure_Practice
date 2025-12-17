@@ -2,67 +2,81 @@
 #define HEAP_H
 
 #include <iostream>
+
 using namespace std;
 
-class Heap {
+class Heap
+{
 protected:
 	int* m_data;
 	int m_itemNum;
 	int m_maxNum;
 
-	int getLeftChildIndex(int dataIndex) {
+	int getLeftChildIndex(int dataIndex)
+	{
 		return (dataIndex * 2 + 1);
 	}
 
-	int getRightChildIndex(int dataIndex) {
+	int getRightChildIndex(int dataIndex)
+	{
 		return (dataIndex * 2 + 2);
 	}
 
-	int getParentIndex(int dataIndex) {
+	int getParentIndex(int dataIndex)
+	{
 		return ((dataIndex - 1) / 2);
 	}
 
-	void Swap(int& dataA, int& dataB) {
+	void Swap(int& dataA, int& dataB)
+	{
 		int temp = dataA;
 		dataA = dataB;
 		dataB = temp;
 	}
 
-	virtual bool IsNotOrdered(int parentIndex, int childIndex) = 0;
+	virtual bool IsNotOrdered(int parentIndex, int childIndex) = 0;				//상속된 최소힙, 최대힙에서 구체적으로 명시.
 
-	virtual bool IsLeftChildTarget(int leftChildIndex, int rightChildIndex) = 0;
+	virtual bool IsLeftChildTarget(int leftChildIndex, int rightChildIndex) = 0;		//상속된 최소힙, 최대힙에서 구체적으로 명시.
 
 	void ReorderByPromoting();
 
 	void ReorderByDemoting();
 
-	void GiveTwiceMemorySpace() {
+	void GiveTwiceMemorySpace()
+	{
 		int newSize = 2 * m_maxNum;
 		int* newData = new int[newSize];
-		for (int i = 0; i < m_maxNum; i++) {
+
+		for (int i = 0; i < m_maxNum; i++)
+		{
 			newData[i] = m_data[i];
 		}
+
 		delete m_data;
 		m_data = newData;
 	}
 
 public:
 	//일단 기본 크기는 50으로 시작. 이를 넘도록 push가 일어나면 기존 크기의 2배를 배정해준다.
-	Heap() {
+	Heap()
+	{
 		cout << "heap is being made" << endl;
 		m_data = new int[50];
 		m_itemNum = 0;
 		m_maxNum = 50;
 	}
 
-	~Heap() {
+	~Heap()
+	{
 		cout << "heap is being removed" << endl;
 		delete m_data;
 		m_data = NULL;
 	}
 
-	void Push(int newData) {
-		if (m_itemNum >= m_maxNum) {
+	void Push(int newData)
+	{
+		if (m_itemNum >= m_maxNum)
+		{
 			cout << "cannot Push item into heap. heap is fulled." << endl;
 			cout << "moving to bigger space...." << endl;
 			GiveTwiceMemorySpace();
@@ -73,8 +87,10 @@ public:
 		ReorderByPromoting();
 	}
 
-	int GetTop() {
-		if (m_itemNum <= 0) {
+	int GetTop()
+	{
+		if (m_itemNum <= 0)
+		{
 			cout << "cannot GetTop item from heap. heap is emptied." << endl;
 			return 0;
 		}
@@ -83,7 +99,8 @@ public:
 	}
 
 	int Pop() {
-		if (m_itemNum <= 0) {
+		if (m_itemNum <= 0)
+		{
 			cout << "cannot GetTop item from heap. heap is emptied." << endl;
 			return 0;
 		}
@@ -95,18 +112,22 @@ public:
 		return poppedData;
 	}
 
-	void RemoveAll() {
+	void RemoveAll()
+	{
 		m_itemNum = 0;
 	}
 };
 
-class MinHeap : public Heap {
-	bool IsNotOrdered(int parentIndex, int childIndex) {
+class MinHeap : public Heap
+{
+	bool IsNotOrdered(int parentIndex, int childIndex)
+	{
 		if (m_data[parentIndex] > m_data[childIndex]) return true;
 		else return false;
 	}
 
-	bool IsLeftChildTarget(int leftChildIndex, int rightChildIndex) {
+	bool IsLeftChildTarget(int leftChildIndex, int rightChildIndex)
+	{
 		if (m_data[leftChildIndex] < m_data[rightChildIndex]) return true;
 		else return false;
 	}
@@ -116,13 +137,16 @@ public :
 };
 
 
-class MaxHeap : public Heap {
-	bool IsNotOrdered(int parentIndex, int childIndex) {
+class MaxHeap : public Heap
+{
+	bool IsNotOrdered(int parentIndex, int childIndex)
+	{
 		if (m_data[parentIndex] < m_data[childIndex]) return true;
 		else return false;
 	}
 
-	bool IsLeftChildTarget(int leftChildIndex, int rightChildIndex) {
+	bool IsLeftChildTarget(int leftChildIndex, int rightChildIndex)
+	{
 		if (m_data[leftChildIndex] > m_data[rightChildIndex]) return true;
 		else return false;
 	}
