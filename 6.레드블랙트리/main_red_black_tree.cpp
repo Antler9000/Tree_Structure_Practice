@@ -1,6 +1,7 @@
 #include "red_black_tree.h"
 
-int main() {
+int main()
+{
 	RedBlackTree& testTree = *(new RedBlackTree());
 	testTree.Insert(5, 55);
 	testTree.Insert(9, 99);
