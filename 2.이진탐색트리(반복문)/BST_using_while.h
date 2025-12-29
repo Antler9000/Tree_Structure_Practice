@@ -235,7 +235,7 @@ protected:
 
 	static void CopyNode(NodeType* sourceNode, BSTTemplate* destBST)
 	{
-		destBST->Insert(sourceNode->m_key, sourceNode->m_data);
+		destBST->Insert(sourceNode);
 	}
 
 
@@ -257,6 +257,12 @@ public:
 		NodeType* made_child = Search(newKey, &BSTTemplate::SetDummyChild);
 		made_child->m_key = newKey;
 		made_child->m_data = newData;
+	}
+
+	void Insert(NodeType* newNode)
+	{
+		NodeType* made_child = Search(newNode->m_key, &BSTTemplate::SetDummyChild);
+		*made_child = *newNode;
 	}
 
 	int Retrieve(int targetKey)

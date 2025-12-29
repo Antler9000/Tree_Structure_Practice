@@ -12,6 +12,7 @@ int main()
 	testBST.Insert(8, 5858);
 	testBST.PreorderPrint();
 
+	cout << "copy test" << endl;
 	BST& copied_test_BST = *(new BST());
 	copied_test_BST.CopyFrom(&testBST);
 	copied_test_BST.PreorderPrint();
@@ -36,6 +37,9 @@ int main()
 
 	testBST.Remove(8);
 	testBST.PreorderPrint();
+
+	cout << "copy test" << endl;
+	copied_test_BST.PreorderPrint();
 
 	delete& testBST;
 	delete& copied_test_BST;
