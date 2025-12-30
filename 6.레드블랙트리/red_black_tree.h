@@ -155,7 +155,6 @@ protected :
 		}
 	}
 
-	//조부 노드의 인자를 레퍼런스 인자로 받아오는 이유는 위 select_proper_rotation(...)메소드에 기재되어 있다.
 	void LL_Rotation(bool isDoubleRed, RedBlackNode* targetNode, RedBlackNode* parentNode, RedBlackNode*& grandParentNode)
 	{
 		if (isDoubleRed == true)
@@ -170,7 +169,6 @@ protected :
 		grandParentNode = parentNode;
 	}
 
-	//조부 노드의 인자를 레퍼런스 인자로 받아오는 이유는 위 select_proper_rotation(...)메소드에 기재되어 있다.
 	void LR_Rotation(bool isDoubleRed, RedBlackNode* targetNode, RedBlackNode* parentNode, RedBlackNode*& grandParentNode)
 	{
 		grandParentNode->m_lChild = targetNode;
@@ -179,7 +177,6 @@ protected :
 		LL_Rotation(isDoubleRed, parentNode, targetNode, grandParentNode);
 	}
 
-	//조부 노드의 인자를 레퍼런스 인자로 받아오는 이유는 위 select_proper_rotation(...)메소드에 기재되어 있다.
 	void RL_Rotation(bool isDoubleRed, RedBlackNode* targetNode, RedBlackNode* parentNode, RedBlackNode*& grandParentNode)
 	{
 		grandParentNode->m_rChild = targetNode;
@@ -188,7 +185,6 @@ protected :
 		RR_Rotation(isDoubleRed, parentNode, targetNode, grandParentNode);
 	}
 
-	//조부 노드의 인자를 레퍼런스 인자로 받아오는 이유는 위 select_proper_rotation(...)메소드에 기재되어 있다.
 	void RR_Rotation(bool isDoubleRed, RedBlackNode* targetNode, RedBlackNode* parentNode, RedBlackNode*& grandParentNode)
 	{
 		if (isDoubleRed == true)
@@ -281,7 +277,6 @@ protected :
 		return;
 	}
 
-	//설명은 자식 포인터에 대해서 대칭 관계인 replace_with_inorder_predecessor(..)을 참고
 	void ReplaceWithInorderSuccessor(RedBlackNode*& targetNode, Stack<RedBlackNode*>* routeStack)
 	{
 		if (targetNode->m_rChild != NULL)
@@ -295,13 +290,14 @@ protected :
 			}
 		}
 
-		RedBlackNode* predecessorNode = routeStack->Pop();
-		RedBlackNode* parentOfPredecessor = routeStack->Pop();
-		RedBlackNode* grandParentOfPredecessor = routeStack->Pop();
-		targetNode->m_key = predecessorNode->m_key;
-		targetNode->m_data = predecessorNode->m_data;
+		RedBlackNode* SuccessorNode = routeStack->Pop();
+		RedBlackNode* parentOfSuccessor = routeStack->Pop();
+		RedBlackNode* grandParentOfSuccessor = routeStack->Pop();
+		targetNode->m_key = SuccessorNode->m_key;
+		targetNode->m_data = SuccessorNode->m_data;
 
-		if (parentOfPredecessor == NULL) {	//트리에 헤드 노드만 하나 남은 경우
+		//트리에 헤드 노드만 하나 남은 경우
+		if (parentOfSuccessor == NULL) {
 			delete m_head;
 			m_head = NULL;
 
@@ -309,29 +305,29 @@ protected :
 		}
 
 		//1
-		if (predecessorNode->m_color == RED) {
-			if (parentOfPredecessor->m_rChild == predecessorNode) parentOfPredecessor->m_rChild = NULL;
-			else parentOfPredecessor->m_lChild = NULL;
-			delete predecessorNode;
+		if (SuccessorNode->m_color == RED) {
+			if (parentOfSuccessor->m_rChild == SuccessorNode) parentOfSuccessor->m_rChild = NULL;
+			else parentOfSuccessor->m_lChild = NULL;
+			delete SuccessorNode;
 
 			return;
 		}
 
 		//2
-		if ((predecessorNode->m_rChild != NULL) && (predecessorNode->m_rChild->m_color == RED)) {
-			predecessorNode->m_key = predecessorNode->m_rChild->m_key;
-			predecessorNode->m_data = predecessorNode->m_rChild->m_data;
-			delete predecessorNode->m_rChild;
-			predecessorNode->m_rChild == NULL;
+		if ((SuccessorNode->m_rChild != NULL) && (SuccessorNode->m_rChild->m_color == RED)) {
+			SuccessorNode->m_key = SuccessorNode->m_rChild->m_key;
+			SuccessorNode->m_data = SuccessorNode->m_rChild->m_data;
+			delete SuccessorNode->m_rChild;
+			SuccessorNode->m_rChild == NULL;
 
 			return;
 		}
 
 		//3~5
-		if (parentOfPredecessor->m_lChild == predecessorNode) parentOfPredecessor->m_lChild = NULL;
-		else parentOfPredecessor->m_rChild = NULL;
-		delete predecessorNode;
-		BalanceTheBlackNodeByFamily(predecessorNode, parentOfPredecessor, grandParentOfPredecessor, routeStack);
+		if (parentOfSuccessor->m_lChild == SuccessorNode) parentOfSuccessor->m_lChild = NULL;
+		else parentOfSuccessor->m_rChild = NULL;
+		delete SuccessorNode;
+		BalanceTheBlackNodeByFamily(SuccessorNode, parentOfSuccessor, grandParentOfSuccessor, routeStack);
 	}
 
 	void BalanceTheBlackNodeByFamily(RedBlackNode* predecessorNode, RedBlackNode* parentOfPredecessor, RedBlackNode* grandParentOfPredecessor, Stack<RedBlackNode*>* routeStack)
