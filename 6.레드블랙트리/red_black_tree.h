@@ -6,7 +6,7 @@
 enum NodeColor { RED, BLACK };
 
 //이상하게 여기에만 정의해놨는데도 이 연산자 오버로딩에서는 중복정의 에러가 떠서, 그냥 inline으로 박제해서 해결함
-//ostream 클래스는 복사생성자가 없으므로, 값복사가 아니라 레퍼런스 방식으로 전달 받음
+//ostream 클래스는 복사생성자가 없으므로, 값복사가 아니라 레퍼런스 방식으로 전달 받도록 함
 inline ostream& operator <<(ostream& out, NodeColor m_color)
 {
 	if (m_color == RED)
@@ -518,7 +518,7 @@ public :
 			{
 				RedBlackNode* parent = routeStack.GetTop();
 				routeStack.Push(traversePtr);
-				if (parent->m_lChild = traversePtr)
+				if (parent->m_lChild == traversePtr)
 				{
 					RemoveTarget(parent->m_lChild, &routeStack);
 				}
