@@ -5,8 +5,8 @@
 
 enum NodeColor { RED, BLACK };
 
-//이상하게 여기에만 정의해놨는데도 이 연산자 오버로딩에서는 중복정의 에러가 떠서, 그냥 inline으로 박제해서 해결함
-//ostream 클래스는 복사생성자가 없으므로, 값복사가 아니라 레퍼런스 방식으로 전달 받도록 함
+//이상하게 여기에만 정의해놨는데도 이 연산자 오버로딩에서는 중복정의 에러가 떠서, 그냥 inline 키워드를 사용해놓음.
+//ostream 클래스는 복사생성자가 없으므로, 값복사가 아니라 레퍼런스 방식으로 전달 받도록 함.
 inline ostream& operator <<(ostream& out, NodeColor m_color)
 {
 	if (m_color == RED)
@@ -242,7 +242,8 @@ protected :
 		targetNode->m_key = predecessorNode->m_key;
 		targetNode->m_data = predecessorNode->m_data;
 
-		if (parentOfPredecessor == NULL)	//트리에 헤드 노드만 하나 남은 경우
+		//트리에 헤드 노드만 하나 남은 경우
+		if (parentOfPredecessor == NULL)
 		{
 			delete m_head;
 			m_head = NULL;
@@ -250,7 +251,7 @@ protected :
 			return;
 		}
 
-		//1.중위 선행자나 후속자 자신이 레드 노드인가?
+		//1.중위 선행자 자신이 레드 노드인가?
 		// -> 그렇다면 그냥 삭제하면 된다
 		if (predecessorNode->m_color == RED)
 		{
@@ -260,8 +261,8 @@ protected :
 
 			return;
 		}
-		//2.위 경우가 아니라면, 중위 선행자나 후속자에게 자식으로 레드 리프 노드가 달려있는가?
-		// -> 그렇다면 중위 선행자나 후속자의 부모에 해당 자식을 붙이며, 해당 빨간 자식 노드의 색깔을 검은색으로 바꾸면 된다
+		//2.위 경우가 아니라면, 중위 선행자에게 자식으로 레드 리프 노드가 달려있는가?
+		// -> 그렇다면 중위 선행자의 부모에 해당 자식을 붙이며, 해당 빨간 자식 노드의 색깔을 검은색으로 바꾸면 된다
 		if ((predecessorNode->m_lChild != NULL) && (predecessorNode->m_lChild->m_color == RED))
 		{
 			predecessorNode->m_key = predecessorNode->m_lChild->m_key;
@@ -271,7 +272,7 @@ protected :
 
 			return;
 		}
-		//3~5. 선행자나 후속자 본인과 그 자식들로는 블랙 노드의 균형을 맞출 수 없다. 부모와 형제자매 노드를 이용해보자.
+		//3~5. 선행자 본인과 그 자식들로는 블랙 노드의 균형을 맞출 수 없다. 부모와 형제자매 노드를 이용해보자.
 		BalanceTheBlackNodeByFamily(predecessorNode, parentOfPredecessor, grandParentOfPredecessor, routeStack);
 
 		return;
@@ -304,7 +305,8 @@ protected :
 			return;
 		}
 
-		//1
+		//1.중위 후속자 자신이 레드 노드인가?
+		// -> 그렇다면 그냥 삭제하면 된다
 		if (SuccessorNode->m_color == RED) {
 			if (parentOfSuccessor->m_rChild == SuccessorNode) parentOfSuccessor->m_rChild = NULL;
 			else parentOfSuccessor->m_lChild = NULL;
@@ -313,7 +315,8 @@ protected :
 			return;
 		}
 
-		//2
+		//2.위 경우가 아니라면, 중위 후속자에게 자식으로 레드 리프 노드가 달려있는가?
+		// -> 그렇다면 중위 후속자의 부모에 해당 자식을 붙이며, 해당 빨간 자식 노드의 색깔을 검은색으로 바꾸면 된다
 		if ((SuccessorNode->m_rChild != NULL) && (SuccessorNode->m_rChild->m_color == RED)) {
 			SuccessorNode->m_key = SuccessorNode->m_rChild->m_key;
 			SuccessorNode->m_data = SuccessorNode->m_rChild->m_data;
@@ -323,20 +326,20 @@ protected :
 			return;
 		}
 
-		//3~5
+		//3~5.후속자 본인과 그 자식들로는 블랙 노드의 균형을 맞출 수 없다. 부모와 형제자매 노드를 이용해보자.
 		if (parentOfSuccessor->m_lChild == SuccessorNode) parentOfSuccessor->m_lChild = NULL;
 		else parentOfSuccessor->m_rChild = NULL;
 		delete SuccessorNode;
 		BalanceTheBlackNodeByFamily(SuccessorNode, parentOfSuccessor, grandParentOfSuccessor, routeStack);
 	}
 
-	void BalanceTheBlackNodeByFamily(RedBlackNode* predecessorNode, RedBlackNode* parentOfPredecessor, RedBlackNode* grandParentOfPredecessor, Stack<RedBlackNode*>* routeStack)
+	void BalanceTheBlackNodeByFamily(RedBlackNode* targetNode, RedBlackNode* parentOfTarget, RedBlackNode* grandParentOfTarget, Stack<RedBlackNode*>* routeStack)
 	{
-		//3.앞선 경우들도 아니라면, 균형을 맞추기 위해 댕겨올 자매노드의 자식(=조카) 레드노드가 있는가?
-		// -> 그렇다면 회전을 통해서 블랙 노드의 균형을 맞추면 된다. 색깔은 회전 이전에 원래 그 자리에 위치해있던 노드의 색깔을 물려받도록 한다
+		//3.앞선 경우들도 아니라면, 균형을 맞추기 위해 댕겨올 자매노드의 자식(=조카) 레드 노드가 있는가?
+		// -> 그렇다면 회전이나 조정을 통해서 블랙 노드의 균형을 맞추면 된다.
 		RedBlackNode* brotherNode;
-		if (parentOfPredecessor->m_lChild != NULL && parentOfPredecessor->m_lChild != predecessorNode) brotherNode = parentOfPredecessor->m_lChild;
-		else if (parentOfPredecessor->m_rChild != NULL && parentOfPredecessor->m_rChild != predecessorNode) brotherNode = parentOfPredecessor->m_rChild;
+		if (parentOfTarget->m_lChild != NULL && parentOfTarget->m_lChild != targetNode) brotherNode = parentOfTarget->m_lChild;
+		else if (parentOfTarget->m_rChild != NULL && parentOfTarget->m_rChild != targetNode) brotherNode = parentOfTarget->m_rChild;
 		else brotherNode = NULL;
 
 
@@ -344,50 +347,100 @@ protected :
 		{
 			if (brotherNode->m_color == RED)
 			{
-				//균형 조건에 의하면 무조건 두 개의 검은색 조카 노드가 존재하는 상태이므로, 회전으로 균형을 맞추도록 하자.
-				//LL 회전과 LR 회전 중의 선택, 그리고 RL 회전과 RR 회전 중의 선택은 자유이다. 여기서는 회전 비용이 적은 LL, RR 회전을 택했다.
-				//회전에 택해지지 못한 녀석이 빨간색을 가져가야 한다.
-				//레드 노드가 부모 자식간에 연달아 나타나서 회전하는 것이 아니므로, 회전시 자동으로 색칠을 조정하면 안 되기에 인자로 false로 준다.
-				if (parentOfPredecessor->m_lChild == brotherNode)
+				//형제 노드가 레드 노드라면, 균형 조건에 의하면 무조건 두 개의 검은색 조카 노드가 존재한다.
+				//그리고 이 조카들과 그것에 달려있을 수 있는 자식 레드 노드들을 사용해서 균형을 맞출 수 있다.
+				//이 과정에서는 기존의 LL, LR, RL, RR 회전으로 수행할 수 없으므로, 여기서는 복잡하더라도 직접 노드 관계를 조정한다.
+				//조정에 사용한 규칙은 다음과 같다.
+				//-우선 삭제되는 중위 선행자나 후속자의 위치를 부모 노드로 채운다.
+				//-그리고 이로 인해 비게 되는 부모 노드의 위치를 형제 노드의 자식이나 손자 중에 가장 값이 낮거나(형제가 우측일시), 높은(형제가 좌측일시) 녀석으로 채운다.
+				//-여전히 트리 중간에 빈 노드가 존재하는 경우 앞선 방법처럼 가장 높거나 낮은 녀석을 이용해서 채운다.
+				if (grandParentOfTarget != NULL && grandParentOfTarget->m_lChild == parentOfTarget)
 				{
-					brotherNode->m_color = BLACK;
-					brotherNode->m_rChild->m_color = RED;
-					DoProperRotation(false, brotherNode->m_lChild, brotherNode, parentOfPredecessor, grandParentOfPredecessor);
+					DoProperAdjustment(targetNode, brotherNode, grandParentOfTarget->m_lChild);
+
+					return;
+				}
+				else if (grandParentOfTarget != NULL && grandParentOfTarget->m_rChild == parentOfTarget)
+				{
+					DoProperAdjustment(targetNode, brotherNode, grandParentOfTarget->m_rChild);
+
+					return;
+				}
+				else if (grandParentOfTarget == NULL)
+				{
+					DoProperAdjustment(targetNode, brotherNode, m_head);
 
 					return;
 				}
 				else
 				{
-					brotherNode->m_color = BLACK;
-					brotherNode->m_lChild->m_color = RED;
-					DoProperRotation(false, brotherNode->m_rChild, brotherNode, parentOfPredecessor, grandParentOfPredecessor);
+					cout << "Cannot be here! The parentOfTarget should be one of grandParentOfTarget's childs" << endl;
 
 					return;
 				}
 			}
 			else if ((brotherNode->m_lChild != NULL) && (brotherNode->m_lChild->m_color == RED))
-			{
-				//레드 노드가 부모 자식간에 연달아 나타나서 회전하는 것이 아니므로, 회전시 자동으로 색칠을 조정하면 안 되기에 인자로 false로 준다.
-				brotherNode->m_lChild->m_color = BLACK;
-				DoProperRotation(false, brotherNode->m_lChild, brotherNode, parentOfPredecessor, grandParentOfPredecessor);
+			{	
+				if (parentOfTarget->m_lChild == brotherNode)
+				{
+					brotherNode->m_lChild->m_color = parentOfTarget->m_color;
+					parentOfTarget->m_color = BLACK;
+					brotherNode->m_color = BLACK;
+					
+				}
+				else if (parentOfTarget->m_rChild == brotherNode)
+				{
+					brotherNode->m_lChild->m_color = parentOfTarget->m_color;
+					parentOfTarget->m_color = BLACK;
+					brotherNode->m_color = BLACK;
+				}
+				else
+				{
+					cout << "Cannot be here! The brotherNode should be one of parentOfTarget's childs" << endl;
+
+					return;
+				}
+
+				DoProperRotation(false, brotherNode->m_lChild, brotherNode, parentOfTarget, grandParentOfTarget);
 
 				return;
 			}
 			else if ((brotherNode->m_rChild != NULL) && (brotherNode->m_rChild->m_color == RED))
 			{
-				//레드 노드가 부모 자식간에 연달아 나타나서 회전하는 것이 아니므로, 회전시 자동으로 색칠을 조정하면 안 되기에 인자로 false로 준다.
-				brotherNode->m_rChild->m_color = BLACK;
-				DoProperRotation(false, brotherNode->m_rChild, brotherNode, parentOfPredecessor, grandParentOfPredecessor);
+				if (parentOfTarget->m_lChild == brotherNode)
+				{
+					brotherNode->m_rChild->m_color = parentOfTarget->m_color;
+					parentOfTarget->m_color = BLACK;
+					brotherNode->m_color = BLACK;
+				}
+				else if (parentOfTarget->m_rChild == brotherNode)
+				{
+					brotherNode->m_rChild->m_color = parentOfTarget->m_color;
+					parentOfTarget->m_color = BLACK;
+					brotherNode->m_color = BLACK;
+				}
+				else
+				{
+					cout << "Cannot be here! The brotherNode should be one of parentOfTarget's childs" << endl;
+
+					return;
+				}
+				
+				DoProperRotation(false, brotherNode->m_rChild, brotherNode, parentOfTarget, grandParentOfTarget);
 
 				return;
+			}
+			else
+			{
+				//댕겨올 조카 노드들이 없으므로, 블럭을 나와 다음 4번 과정으로 진행한다.
 			}
 		}
 
 		//4.위 경우도 아니라면, 부모노드가 레드노드인가?
 		// -> 부모노드는 블랙노드가 되도록 하고, 자매 노드가 있으면 레드 노드가 되도록 하여 균형을 맞추자
-		if (parentOfPredecessor->m_color == RED)
+		if (parentOfTarget->m_color == RED)
 		{
-			parentOfPredecessor->m_color = BLACK;
+			parentOfTarget->m_color = BLACK;
 			if(brotherNode != NULL) brotherNode->m_color = RED;
 
 			return;
@@ -398,16 +451,167 @@ protected :
 		// -> 자매 노드가 있으면 레드 노드가 되도록 하자. 그리고 부모노드 위치의 삭제 문제로 변환하여 다시 3번부터 수행하도록 하자
 		if (brotherNode != NULL) brotherNode->m_color = RED;
 
-		if (grandParentOfPredecessor != NULL)
+		if (grandParentOfTarget != NULL)
 		{
-			predecessorNode = parentOfPredecessor;
-			parentOfPredecessor = grandParentOfPredecessor;
-			grandParentOfPredecessor = routeStack->Pop();
+			targetNode = parentOfTarget;
+			parentOfTarget = grandParentOfTarget;
+			grandParentOfTarget = routeStack->Pop();
 
-			BalanceTheBlackNodeByFamily(predecessorNode, parentOfPredecessor, grandParentOfPredecessor, routeStack);
+			BalanceTheBlackNodeByFamily(targetNode, parentOfTarget, grandParentOfTarget, routeStack);
 		}
 
 		return;
+	}
+	
+	//삭제되는 중위 선행자나 후속자의 부모 노드의 교체를 원활히 교체하기 위해서, 일반 변수가 아니라 레퍼런스 변수로 이를 지칭하였다.
+	void DoProperAdjustment(RedBlackNode* targetNode, RedBlackNode* brotherNode, RedBlackNode*& parentOfTarget)
+	{
+
+		RedBlackNode* originalParentOfTarget = parentOfTarget;
+
+		if (originalParentOfTarget->m_lChild == brotherNode)
+		{
+			if (brotherNode->m_rChild->m_rChild != NULL && brotherNode->m_rChild->m_rChild->m_color == RED)
+			{
+				brotherNode->m_rChild->m_rChild->m_color = BLACK;
+
+				originalParentOfTarget->m_lChild = NULL;
+				parentOfTarget = brotherNode->m_rChild->m_rChild;
+				brotherNode->m_rChild->m_rChild = NULL;
+				parentOfTarget->m_rChild = originalParentOfTarget;
+				parentOfTarget->m_lChild = brotherNode;
+
+				return;
+			}
+			else if (brotherNode->m_rChild->m_lChild != NULL && brotherNode->m_rChild->m_lChild->m_color == RED)
+			{
+				brotherNode->m_rChild->m_lChild->m_color = BLACK;
+
+				originalParentOfTarget->m_lChild = NULL;
+				parentOfTarget = brotherNode->m_rChild;
+				brotherNode->m_rChild = brotherNode->m_rChild->m_lChild;
+				parentOfTarget->m_rChild = originalParentOfTarget;
+				parentOfTarget->m_lChild = brotherNode;
+
+				return;
+			}
+			else if (brotherNode->m_lChild->m_rChild != NULL && brotherNode->m_lChild->m_rChild->m_color == RED)
+			{
+				brotherNode->m_color = BLACK;
+
+				originalParentOfTarget->m_lChild = NULL;
+				parentOfTarget = brotherNode->m_rChild;
+				brotherNode->m_rChild = NULL;
+				parentOfTarget->m_rChild = originalParentOfTarget;
+				parentOfTarget->m_lChild = brotherNode->m_lChild->m_rChild;
+				brotherNode->m_lChild->m_rChild = NULL;
+				parentOfTarget->m_lChild->m_rChild = brotherNode;
+				parentOfTarget->m_lChild->m_lChild = brotherNode->m_lChild;
+				brotherNode->m_lChild = NULL;
+
+				return;
+			}
+			else if (brotherNode->m_lChild->m_lChild != NULL && brotherNode->m_lChild->m_lChild->m_color == RED)
+			{
+				originalParentOfTarget->m_lChild = NULL;
+				parentOfTarget = brotherNode->m_rChild;
+				brotherNode->m_rChild = NULL;
+				parentOfTarget->m_rChild = originalParentOfTarget;
+				parentOfTarget->m_lChild = brotherNode->m_lChild;
+				parentOfTarget->m_lChild->m_rChild = brotherNode;
+				brotherNode->m_lChild = NULL;
+
+				return;
+			}
+			//균형을 맞출 조카의 레드 노드 자식들이 없는 경우에도 조정이 가능하다.
+			else
+			{
+				brotherNode->m_color = BLACK;
+				brotherNode->m_lChild->m_color = RED;
+
+				originalParentOfTarget->m_lChild = NULL;
+				parentOfTarget = brotherNode->m_rChild;
+				brotherNode->m_rChild = NULL;
+				parentOfTarget->m_rChild = originalParentOfTarget;
+				parentOfTarget->m_lChild = brotherNode;
+				return;
+			}
+		}
+		else if (originalParentOfTarget->m_rChild == brotherNode)
+		{
+			if (brotherNode->m_lChild->m_lChild != NULL && brotherNode->m_lChild->m_lChild->m_color == RED)
+			{
+				brotherNode->m_lChild->m_lChild->m_color = BLACK;
+
+				originalParentOfTarget->m_rChild = NULL;
+				parentOfTarget = brotherNode->m_lChild->m_lChild;
+				brotherNode->m_lChild->m_lChild = NULL;
+				parentOfTarget->m_lChild = originalParentOfTarget;
+				parentOfTarget->m_rChild = brotherNode;
+
+				return;
+			}
+			else if (brotherNode->m_lChild->m_rChild != NULL && brotherNode->m_lChild->m_rChild->m_color == RED)
+			{
+				brotherNode->m_lChild->m_rChild->m_color = BLACK;
+
+				originalParentOfTarget->m_rChild = NULL;
+				parentOfTarget = brotherNode->m_lChild;
+				brotherNode->m_lChild = brotherNode->m_lChild->m_rChild;
+				parentOfTarget->m_lChild = originalParentOfTarget;
+				parentOfTarget->m_rChild = brotherNode;
+
+				return;
+			}
+			else if (brotherNode->m_rChild->m_lChild != NULL && brotherNode->m_rChild->m_lChild->m_color == RED)
+			{
+				brotherNode->m_color = BLACK;
+
+				originalParentOfTarget->m_rChild = NULL;
+				parentOfTarget = brotherNode->m_lChild;
+				brotherNode->m_lChild = NULL;
+				parentOfTarget->m_lChild = originalParentOfTarget;
+				parentOfTarget->m_rChild = brotherNode->m_rChild->m_lChild;
+				brotherNode->m_rChild->m_lChild = NULL;
+				parentOfTarget->m_rChild->m_lChild = brotherNode;
+				parentOfTarget->m_rChild->m_rChild = brotherNode->m_rChild;
+				brotherNode->m_rChild = NULL;
+
+				return;
+			}
+			else if (brotherNode->m_rChild->m_rChild != NULL && brotherNode->m_rChild->m_rChild->m_color == RED)
+			{
+				originalParentOfTarget->m_rChild = NULL;
+				parentOfTarget = brotherNode->m_lChild;
+				brotherNode->m_lChild = NULL;
+				parentOfTarget->m_lChild = originalParentOfTarget;
+				parentOfTarget->m_rChild = brotherNode->m_rChild;
+				parentOfTarget->m_rChild->m_lChild = brotherNode;
+				brotherNode->m_rChild = NULL;
+
+
+				return;
+			}
+			//균형을 맞출 조카의 레드 노드 자식들이 없는 경우에도 조정이 가능하다.
+			else
+			{
+				brotherNode->m_color = BLACK;
+				brotherNode->m_rChild->m_color = RED;
+
+				originalParentOfTarget->m_rChild = NULL;
+				parentOfTarget = brotherNode->m_lChild;
+				brotherNode->m_lChild = NULL;
+				parentOfTarget->m_lChild = originalParentOfTarget;
+				parentOfTarget->m_rChild = brotherNode;
+				return;
+			}
+		}
+		else
+		{
+			cout << "Cannot be here! The brotherNode should be one of ParentOfTarget's childs" << endl;
+
+			return;
+		}
 	}
 
 
