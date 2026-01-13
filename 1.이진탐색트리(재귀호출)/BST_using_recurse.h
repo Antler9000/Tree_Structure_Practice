@@ -12,39 +12,39 @@ class Node
 
 	int	m_data;
 	int	m_key;
-	Node* m_lChild;
-	Node* m_rChild;
+	Node* m_pLeftChild;
+	Node* m_pRightChild;
 
 	Node(int newKey, int newData)
 	{
 		m_key = newKey;
 		m_data = newData;
-		m_lChild = NULL;
-		m_rChild = NULL;
+		m_pLeftChild = NULL;
+		m_pRightChild = NULL;
 	}
 
 	~Node()
 	{
-		delete m_lChild;
-		delete m_rChild;
+		delete m_pLeftChild;
+		delete m_pRightChild;
 	}
 };
 
 class BST
 {
-	Node* m_head;
+	Node* m_pHead;
 
 	//부모가 가리키는 자식에 대한 정보를 NULL로 바꿔야하므로, 레퍼런스 인자로 받음
-	void RemoveTarget(Node*& removeTargetNode);
+	void RemoveTarget(Node*& pRemoveTargetNode);
 
-	void ReplaceWithInorderPredecessor(Node* removeTargetNode);
+	void ReplaceWithInorderPredecessor(Node* pRemoveTargetNode);
 
-	void ReplaceWithInorderSuccessor(Node* removeTargetNode);
+	void ReplaceWithInorderSuccessor(Node* pRemoveTargetNode);
 
 public:
 	BST()
 	{
-		m_head = NULL;
+		m_pHead = NULL;
 	}
 
 	~BST()
@@ -56,154 +56,154 @@ public:
 	void Insert(int newKey, int newData)
 	{
 		cout << "inserting Node.... (key : " << newKey << ", data : " << newData << " )" << endl;
-		if (m_head == NULL)
+		if (m_pHead == NULL)
 		{
-			m_head = new Node(newKey, newData);
+			m_pHead = new Node(newKey, newData);
 		}
 		else
 		{
-			InsertRecurse(m_head, newKey, newData);
+			InsertRecurse(m_pHead, newKey, newData);
 		}
 		cout << "insert ended" << endl;
 	}
 
-	void InsertRecurse(Node* searchTargetNode, int newKey, int newData);
+	void InsertRecurse(Node* pSearchTargetNode, int newKey, int newData);
 
 	//검색
 	int Retrieve(int retrieveTargetKey)
 	{
-		if (m_head == NULL)
+		if (m_pHead == NULL)
 		{
 			cout << "cannot retrieve. becuase tree is null." << endl;
 			return -1;
 		}
 
 		cout << "retrieving Node.... (key : " << retrieveTargetKey << " )" << endl;
-		int retrieveValue = RetrieveRecurse(m_head, retrieveTargetKey);
+		int retrieveValue = RetrieveRecurse(m_pHead, retrieveTargetKey);
 		cout << "retrieving ended" << endl;
 		return retrieveValue;
 	}
 
-	int RetrieveRecurse(Node* searchTargetNode, int retrieiveTargetKey);
+	int RetrieveRecurse(Node* pSearchTargetNode, int retrieiveTargetKey);
 
 	//삭제
 	void Remove(int removeTargetKey)
 	{
-		if (m_head == NULL)
+		if (m_pHead == NULL)
 		{
 			cout << "cannot remove. becuase tree is null." << endl;
 			return;
 		}
 		
-		if (m_head->m_key == removeTargetKey)
+		if (m_pHead->m_key == removeTargetKey)
 		{
-			RemoveTarget(m_head);
+			RemoveTarget(m_pHead);
 		}
 		else
 		{
 			cout << "removing Node.... (key : " << removeTargetKey << " )" << endl;
-			RemoveRecurse(m_head, removeTargetKey);
+			RemoveRecurse(m_pHead, removeTargetKey);
 			cout << "removing ended" << endl;
 		}
 	}
 
-	void RemoveRecurse(Node* searchTargetNode, int removeTargetKey);
+	void RemoveRecurse(Node* pSearchTargetNode, int removeTargetKey);
 
 	//트리 복사
-	void CopyFrom(BST* sourceBST)
+	void CopyFrom(BST* pSourceBST)
 	{		
-		if (sourceBST == NULL)
+		if (pSourceBST == NULL)
 		{
 			cout << "cannot copying. becuase tree is null." << endl;
 			return;
 		}
 		
-		if (sourceBST->m_head == NULL)
+		if (pSourceBST->m_pHead == NULL)
 		{
-			cout << "cannot coping. becuase m_head is null." << endl;
+			cout << "cannot coping. becuase m_pHead is null." << endl;
 			return;
 		}
 
 		cout << "copying tree..." << endl;
-		CopyFromRecurse(sourceBST->m_head);
+		CopyFromRecurse(pSourceBST->m_pHead);
 		cout << "copying dended" << endl;
 	}
 
-	void CopyFromRecurse(Node* sourceNode)
+	void CopyFromRecurse(Node* pSourceNode)
 	{
-		Insert(sourceNode->m_key, sourceNode->m_data);
-		if (sourceNode->m_lChild != NULL) CopyFromRecurse(sourceNode->m_lChild);
-		if (sourceNode->m_rChild != NULL) CopyFromRecurse(sourceNode->m_rChild);
+		Insert(pSourceNode->m_key, pSourceNode->m_data);
+		if (pSourceNode->m_pLeftChild != NULL) CopyFromRecurse(pSourceNode->m_pLeftChild);
+		if (pSourceNode->m_pRightChild != NULL) CopyFromRecurse(pSourceNode->m_pRightChild);
 	}
 
 	//트리 삭제
 	void RemoveAll()
 	{
-		delete m_head;
-		m_head = NULL;
+		delete m_pHead;
+		m_pHead = NULL;
 	}
 
 	//전위 순회
 	void PreorderPrint()
 	{
-		if (m_head == NULL)
+		if (m_pHead == NULL)
 		{
-			cout << "cannot traverse print. becuase m_head is null." << endl;
+			cout << "cannot traverse print. becuase m_pHead is null." << endl;
 			return;
 		}
 
 		cout << "preorder traverse..." << endl;
-		PreorderPrintRecurse(m_head);
+		PreorderPrintRecurse(m_pHead);
 		cout << "traverse ended" << endl;
 	}
 
-	void PreorderPrintRecurse(Node* targetNode)
+	void PreorderPrintRecurse(Node* pTargetNode)
 	{
-		cout << "node m_key : " << targetNode->m_key << " / node m_data : " << targetNode->m_data << endl;
-		if (targetNode->m_lChild != NULL) PreorderPrintRecurse(targetNode->m_lChild);
-		if (targetNode->m_rChild != NULL) PreorderPrintRecurse(targetNode->m_rChild);
+		cout << "node m_key : " << pTargetNode->m_key << " / node m_data : " << pTargetNode->m_data << endl;
+		if (pTargetNode->m_pLeftChild != NULL) PreorderPrintRecurse(pTargetNode->m_pLeftChild);
+		if (pTargetNode->m_pRightChild != NULL) PreorderPrintRecurse(pTargetNode->m_pRightChild);
 	}
 
 	//중위 순회
 	void InorderPrint()
 	{
-		if (m_head == NULL)
+		if (m_pHead == NULL)
 		{
-			cout << "cannot traverse print. becuase m_head is null." << endl;
+			cout << "cannot traverse print. becuase m_pHead is null." << endl;
 			return;
 		}
 
 		cout << "inorder traverse..." << endl;
-		InorderPrintRecurse(m_head);
+		InorderPrintRecurse(m_pHead);
 		cout << "traverse ended" << endl;
 	}
 
-	void InorderPrintRecurse(Node* targetNode)
+	void InorderPrintRecurse(Node* pTargetNode)
 	{
-		if (targetNode->m_lChild != NULL) InorderPrintRecurse(targetNode->m_lChild);
-		cout << "node m_key : " << targetNode->m_key << " / node m_data : " << targetNode->m_data << endl;
-		if (targetNode->m_rChild != NULL) InorderPrintRecurse(targetNode->m_rChild);
+		if (pTargetNode->m_pLeftChild != NULL) InorderPrintRecurse(pTargetNode->m_pLeftChild);
+		cout << "node m_key : " << pTargetNode->m_key << " / node m_data : " << pTargetNode->m_data << endl;
+		if (pTargetNode->m_pRightChild != NULL) InorderPrintRecurse(pTargetNode->m_pRightChild);
 	}
 
 	//후위 순회
 	void PostOrderPrint()
 	{
-		if (m_head == NULL)
+		if (m_pHead == NULL)
 		{
-			cout << "cannot traverse print. becuase m_head is null." << endl;
+			cout << "cannot traverse print. becuase m_pHead is null." << endl;
 			return;
 		}
 
 		cout << "postorder traverse..." << endl;
-		PostOrderPrintRecurse(m_head);
+		PostOrderPrintRecurse(m_pHead);
 		cout << "traverse ended" << endl;
 	}
 
-	void PostOrderPrintRecurse(Node* targetNode)
+	void PostOrderPrintRecurse(Node* pTargetNode)
 	{
-		if (targetNode->m_lChild != NULL) PostOrderPrintRecurse(targetNode->m_lChild);
-		if (targetNode->m_rChild != NULL) PostOrderPrintRecurse(targetNode->m_rChild);
-		cout << "node m_key : " << targetNode->m_key << " / node m_data : " << targetNode->m_data << endl;
+		if (pTargetNode->m_pLeftChild != NULL) PostOrderPrintRecurse(pTargetNode->m_pLeftChild);
+		if (pTargetNode->m_pRightChild != NULL) PostOrderPrintRecurse(pTargetNode->m_pRightChild);
+		cout << "node m_key : " << pTargetNode->m_key << " / node m_data : " << pTargetNode->m_data << endl;
 	}
 
 };
