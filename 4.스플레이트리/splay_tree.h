@@ -10,15 +10,15 @@ class SplayNode
 
 	int m_key;
 	int m_data;
-	SplayNode* m_lChild;
-	SplayNode* m_rChild;
+	SplayNode* m_pLeftChild;
+	SplayNode* m_pRightChild;
 
 	SplayNode(int newKey, int newData)
 	{
 		m_key = newKey;
 		m_data = newData;
-		m_lChild = NULL;
-		m_rChild = NULL;
+		m_pLeftChild = NULL;
+		m_pRightChild = NULL;
 	}
 
 	inline void PrintNode()
@@ -29,80 +29,80 @@ class SplayNode
 
 class SplayTree : public BSTTemplate<SplayNode>
 {
-	void SplayTarget(SplayNode* greatgrandfatherOfTraversePtr, SplayNode* grandfatherOfTarget, SplayNode* fatherOfTarget, SplayNode* target);
+	void SplayTarget(SplayNode* pGreatGrandFatherOfTarget, SplayNode* pGrandFatherOfTarget, SplayNode* pFatherOfTarget, SplayNode* pTarget);
 
 	//ZIG의 경우에는 부모까지 변화가 일어나는 경우이므로, 부모를 가르키는 조부의 자식 포인터를 직접 수정할 수 있도록 레퍼런스 인자를 사용하였다.
 	//ZIG_ZIG나 ZIG_ZAG와 같이 조부까지 변화가 일어나는 경우를 위해, 조부를 가리키는 증조부의 자식 포인터를 직접 수정할 수 있도록 레퍼런스 인자를 사용하였다.
-	void L_Zig(SplayNode*& fatherOfTarget, SplayNode* target)
+	void L_Zig(SplayNode*& pFatherOfTarget, SplayNode* pTarget)
 	{
 		cout << "L_Zig" << endl;
-		fatherOfTarget->m_lChild = target->m_rChild;
-		target->m_rChild = fatherOfTarget;
-		fatherOfTarget = target;
+		pFatherOfTarget->m_pLeftChild = pTarget->m_pRightChild;
+		pTarget->m_pRightChild = pFatherOfTarget;
+		pFatherOfTarget = pTarget;
 	}
 
-	void R_Zig(SplayNode*& fatherOfTarget, SplayNode* target)
+	void R_Zig(SplayNode*& pFatherOfTarget, SplayNode* pTarget)
 	{
 		cout << "R_Zig" << endl;
-		fatherOfTarget->m_rChild = target->m_lChild;
-		target->m_lChild = fatherOfTarget;
-		fatherOfTarget = target;
+		pFatherOfTarget->m_pRightChild = pTarget->m_pLeftChild;
+		pTarget->m_pLeftChild = pFatherOfTarget;
+		pFatherOfTarget = pTarget;
 	}
 
-	void LL_ZigZig(SplayNode*& grandfatherOfTarget, SplayNode* father_of_target, SplayNode* target)
+	void LL_ZigZig(SplayNode*& pGrandFatherOfTarget, SplayNode* pFatherOfTarget, SplayNode* pTarget)
 	{
 		cout << "LL_ZigZig" << endl;
-		grandfatherOfTarget->m_lChild = father_of_target->m_rChild;
-		father_of_target->m_rChild = grandfatherOfTarget;
-		grandfatherOfTarget = father_of_target;
+		pGrandFatherOfTarget->m_pLeftChild = pFatherOfTarget->m_pRightChild;
+		pFatherOfTarget->m_pRightChild = pGrandFatherOfTarget;
+		pGrandFatherOfTarget = pFatherOfTarget;
 
-		father_of_target->m_lChild = target->m_rChild;
-		target->m_rChild = father_of_target;
-		grandfatherOfTarget = target;
+		pFatherOfTarget->m_pLeftChild = pTarget->m_pRightChild;
+		pTarget->m_pRightChild = pFatherOfTarget;
+		pGrandFatherOfTarget = pTarget;
 	}
 
-	void LR_ZigZag(SplayNode*& grandfatherOfTarget, SplayNode* father_of_target, SplayNode* target)
+	void LR_ZigZag(SplayNode*& pGrandFatherOfTarget, SplayNode* pFatherOfTarget, SplayNode* pTarget)
 	{
 		cout << "LR_ZigZag" << endl;
-		cout << grandfatherOfTarget->m_key << " " << father_of_target->m_key << " " << target->m_key << endl;
-		grandfatherOfTarget->m_lChild = target;
-		father_of_target->m_rChild = target->m_lChild;
-		target->m_lChild = father_of_target;
+		cout << pGrandFatherOfTarget->m_key << " " << pFatherOfTarget->m_key << " " << pTarget->m_key << endl;
+		pGrandFatherOfTarget->m_pLeftChild = pTarget;
+		pFatherOfTarget->m_pRightChild = pTarget->m_pLeftChild;
+		pTarget->m_pLeftChild = pFatherOfTarget;
 
-		grandfatherOfTarget->m_lChild = target->m_rChild;
-		target->m_rChild = grandfatherOfTarget;
-		grandfatherOfTarget = target;
+		pGrandFatherOfTarget->m_pLeftChild = pTarget->m_pRightChild;
+		pTarget->m_pRightChild = pGrandFatherOfTarget;
+		pGrandFatherOfTarget = pTarget;
 	}
 
-	void RL_ZigZag(SplayNode*& grandfatherOfTarget, SplayNode* father_of_target, SplayNode* target)
+	void RL_ZigZag(SplayNode*& pGrandFatherOfTarget, SplayNode* pFatherOfTarget, SplayNode* pTarget)
 	{
 		cout << "RL_ZigZag" << endl;
-		grandfatherOfTarget->m_rChild = target;
-		father_of_target->m_lChild = target->m_rChild;
-		target->m_rChild = father_of_target;
+		pGrandFatherOfTarget->m_pRightChild = pTarget;
+		pFatherOfTarget->m_pLeftChild = pTarget->m_pRightChild;
+		pTarget->m_pRightChild = pFatherOfTarget;
 
-		grandfatherOfTarget->m_rChild = target->m_lChild;
-		target->m_lChild = grandfatherOfTarget;
-		grandfatherOfTarget = target;
+		pGrandFatherOfTarget->m_pRightChild = pTarget->m_pLeftChild;
+		pTarget->m_pLeftChild = pGrandFatherOfTarget;
+		pGrandFatherOfTarget = pTarget;
 	}
 
-	void RR_ZigZig(SplayNode*& grandfatherOfTarget, SplayNode* father_of_target, SplayNode* target)
+	void RR_ZigZig(SplayNode*& pGrandFatherOfTarget, SplayNode* pFatherOfTarget, SplayNode* pTarget)
 	{
 		cout << "RR_ZigZig" << endl;
-		grandfatherOfTarget->m_rChild = father_of_target->m_lChild;
-		father_of_target->m_lChild = grandfatherOfTarget;
-		grandfatherOfTarget = father_of_target;
+		pGrandFatherOfTarget->m_pRightChild = pFatherOfTarget->m_pLeftChild;
+		pFatherOfTarget->m_pLeftChild = pGrandFatherOfTarget;
+		pGrandFatherOfTarget = pFatherOfTarget;
 
-		father_of_target->m_rChild = target->m_lChild;
-		target->m_lChild = father_of_target;
-		grandfatherOfTarget = target;
+		pFatherOfTarget->m_pRightChild = pTarget->m_pLeftChild;
+		pTarget->m_pLeftChild = pFatherOfTarget;
+		pGrandFatherOfTarget = pTarget;
 	}
 
 
 public :
 	SplayTree() : BSTTemplate() {}
 
-	int Retrieve(int target_key);
+	int Retrieve(int targetKey);
 };
 
 #endif //SPLAY_TREE_H
