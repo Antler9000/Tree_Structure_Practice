@@ -8,7 +8,7 @@ using namespace std;
 class Heap
 {
 protected:
-	int* m_data;
+	int* m_pDatum;
 	int m_itemNum;
 	int m_maxNum;
 
@@ -49,11 +49,11 @@ protected:
 
 		for (int i = 0; i < m_maxNum; i++)
 		{
-			newData[i] = m_data[i];
+			newData[i] = m_pDatum[i];
 		}
 
-		delete m_data;
-		m_data = newData;
+		delete m_pDatum;
+		m_pDatum = newData;
 	}
 
 public:
@@ -61,7 +61,7 @@ public:
 	Heap()
 	{
 		cout << "heap is being made" << endl;
-		m_data = new int[50];
+		m_pDatum = new int[50];
 		m_itemNum = 0;
 		m_maxNum = 50;
 	}
@@ -69,8 +69,8 @@ public:
 	~Heap()
 	{
 		cout << "heap is being removed" << endl;
-		delete m_data;
-		m_data = NULL;
+		delete m_pDatum;
+		m_pDatum = NULL;
 	}
 
 	void Push(int newData)
@@ -82,7 +82,7 @@ public:
 			GiveTwiceMemorySpace();
 		}
 
-		m_data[m_itemNum] = newData;
+		m_pDatum[m_itemNum] = newData;
 		m_itemNum++;
 		ReorderByPromoting();
 	}
@@ -95,7 +95,7 @@ public:
 			return 0;
 		}
 
-		return m_data[0];
+		return m_pDatum[0];
 	}
 
 	int Pop() {
@@ -106,8 +106,8 @@ public:
 		}
 
 		m_itemNum--;
-		int poppedData = m_data[0];
-		m_data[0] = m_data[m_itemNum];
+		int poppedData = m_pDatum[0];
+		m_pDatum[0] = m_pDatum[m_itemNum];
 		ReorderByDemoting();
 		return poppedData;
 	}
@@ -122,13 +122,13 @@ class MinHeap : public Heap
 {
 	bool IsNotOrdered(int parentIndex, int childIndex)
 	{
-		if (m_data[parentIndex] > m_data[childIndex]) return true;
+		if (m_pDatum[parentIndex] > m_pDatum[childIndex]) return true;
 		else return false;
 	}
 
 	bool IsLeftChildTarget(int leftChildIndex, int rightChildIndex)
 	{
-		if (m_data[leftChildIndex] < m_data[rightChildIndex]) return true;
+		if (m_pDatum[leftChildIndex] < m_pDatum[rightChildIndex]) return true;
 		else return false;
 	}
 
@@ -141,13 +141,13 @@ class MaxHeap : public Heap
 {
 	bool IsNotOrdered(int parentIndex, int childIndex)
 	{
-		if (m_data[parentIndex] < m_data[childIndex]) return true;
+		if (m_pDatum[parentIndex] < m_pDatum[childIndex]) return true;
 		else return false;
 	}
 
 	bool IsLeftChildTarget(int leftChildIndex, int rightChildIndex)
 	{
-		if (m_data[leftChildIndex] > m_data[rightChildIndex]) return true;
+		if (m_pDatum[leftChildIndex] > m_pDatum[rightChildIndex]) return true;
 		else return false;
 	}
 

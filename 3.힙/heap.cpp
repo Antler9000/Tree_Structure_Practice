@@ -5,7 +5,7 @@ void Heap::ReorderByPromoting() {
 	int parentIndex = getParentIndex(targetIndex);
 
 	while ((targetIndex > 0) && IsNotOrdered(parentIndex, targetIndex)) {
-		Swap(m_data[targetIndex], m_data[parentIndex]);
+		Swap(m_pDatum[targetIndex], m_pDatum[parentIndex]);
 		targetIndex = parentIndex;
 		parentIndex = getParentIndex(targetIndex);
 	}
@@ -27,7 +27,7 @@ void Heap::ReorderByDemoting() {
 		}
 
 		if (IsNotOrdered(targetIndex, targetChildIndex)) {
-			Swap(m_data[targetIndex], m_data[targetChildIndex]);
+			Swap(m_pDatum[targetIndex], m_pDatum[targetChildIndex]);
 			targetIndex = targetChildIndex;
 			leftChildIndex = getLeftChildIndex(targetIndex);
 			rightChildIndex = getRightChildIndex(targetIndex);
