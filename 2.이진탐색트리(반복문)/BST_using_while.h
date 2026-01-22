@@ -13,15 +13,15 @@ class BSTNode
 
 	int m_key;
 	int m_data;
-	BSTNode* m_lChild;
-	BSTNode* m_rChild;
+	BSTNode* m_pLeftChild;
+	BSTNode* m_pRightChild;
 
 	BSTNode(int newKey, int newData)
 	{
 		m_key = newKey;
 		m_data = newData;
-		m_lChild = NULL;
-		m_rChild = NULL;
+		m_pLeftChild = NULL;
+		m_pRightChild = NULL;
 	}
 
 	inline void PrintNode()
@@ -38,139 +38,139 @@ template <class NodeType = BSTNode>
 class BSTTemplate
 {
 protected:
-	NodeType* m_head;
+	NodeType* m_pHead;
 
 	//"to_do_with_target_ptr" 메소드 포인터는 특정 target_key를 가진 노드를 가리키는 자식 포인터에 수행할 작업이나,
 	//특정 target_key 노드가 삽입될 수 있는 NULL 자식 포인터에 수행할 작업을 넘겨주는 인터페이스임.
 	//응용되는 삽입-검색-삭제에서는 부모가 자식을 가리키는 포인터 변수를 직접 수정할 수 있어야 하기에, 메소드 포인터는 레퍼런스 인자를 가짐
-	NodeType* Search(int targetKey, NodeType* (BSTTemplate::* toDoWithTargetPtr)(NodeType*&))
+	NodeType* Search(int targetKey, NodeType* (BSTTemplate::* pToDoWithTargetPtr)(NodeType*&))
 	{
-		if (m_head == NULL) return (this->*toDoWithTargetPtr)(m_head);
-		else if (targetKey == m_head->m_key) return (this->*toDoWithTargetPtr)(m_head);
+		if (m_pHead == NULL) return (this->*pToDoWithTargetPtr)(m_pHead);
+		else if (targetKey == m_pHead->m_key) return (this->*pToDoWithTargetPtr)(m_pHead);
 
-		NodeType* searchPtr = m_head;
+		NodeType* pSearch = m_pHead;
 		while (true)
 		{
-			if (targetKey < searchPtr->m_key)
+			if (targetKey < pSearch->m_key)
 			{
-				if (searchPtr->m_lChild != NULL && searchPtr->m_lChild->m_key != targetKey) searchPtr = searchPtr->m_lChild;
-				else return (this->*toDoWithTargetPtr)(searchPtr->m_lChild);
+				if (pSearch->m_pLeftChild != NULL && pSearch->m_pLeftChild->m_key != targetKey) pSearch = pSearch->m_pLeftChild;
+				else return (this->*pToDoWithTargetPtr)(pSearch->m_pLeftChild);
 			}
 			else
 			{
-				if (searchPtr->m_rChild != NULL && searchPtr->m_rChild->m_key != targetKey) searchPtr = searchPtr->m_rChild;
-				else return (this->*toDoWithTargetPtr)(searchPtr->m_rChild);
+				if (pSearch->m_pRightChild != NULL && pSearch->m_pRightChild->m_key != targetKey) pSearch = pSearch->m_pRightChild;
+				else return (this->*pToDoWithTargetPtr)(pSearch->m_pRightChild);
 			}
 		}
 	}
 
-	NodeType* GetT(NodeType*& parentSeat)
+	NodeType* GetT(NodeType*& pParentSeat)
 	{
-		return parentSeat;
+		return pParentSeat;
 	}
 
-	NodeType* SetDummyChild(NodeType*& parentSeat)
+	NodeType* SetDummyChild(NodeType*& pParentSeat)
 	{
-		return parentSeat = new NodeType(0, 0);
+		return pParentSeat = new NodeType(0, 0);
 	}
 
-	NodeType* RemoveTarget(NodeType*& targetPtr)
+	NodeType* RemoveTarget(NodeType*& pTarget)
 	{
-		if (targetPtr->m_lChild != NULL && targetPtr->m_rChild != NULL)	//두 자식 모두 있는 경우엔, 중위선행자와 중위후속자 중에서 그냥 중위후속자(오른쪽 자식 트리에서 제일 작은 키 값의 노드)를 없애기로함
+		if (pTarget->m_pLeftChild != NULL && pTarget->m_pRightChild != NULL)	//두 자식 모두 있는 경우엔, 중위선행자와 중위후속자 중에서 그냥 중위후속자(오른쪽 자식 트리에서 제일 작은 키 값의 노드)를 없애기로함
 		{
-			ReplaceWithInorderSuccessor(targetPtr);
+			ReplaceWithInorderSuccessor(pTarget);
 		}
-		else if (targetPtr->m_lChild == NULL && targetPtr->m_rChild != NULL)
+		else if (pTarget->m_pLeftChild == NULL && pTarget->m_pRightChild != NULL)
 		{
-			ReplaceWithInorderSuccessor(targetPtr);
+			ReplaceWithInorderSuccessor(pTarget);
 		}
-		else if (targetPtr->m_lChild != NULL && targetPtr->m_rChild == NULL)
+		else if (pTarget->m_pLeftChild != NULL && pTarget->m_pRightChild == NULL)
 		{
-			ReplaceWithInorderPredecessor(targetPtr);
+			ReplaceWithInorderPredecessor(pTarget);
 		}
 		else
 		{
-			delete targetPtr;
-			targetPtr = NULL;
-			return targetPtr;
+			delete pTarget;
+			pTarget = NULL;
+			return pTarget;
 		}
 	}
 
-	void ReplaceWithInorderPredecessor(NodeType*& targetPtr)
+	void ReplaceWithInorderPredecessor(NodeType*& pTarget)
 	{
-		NodeType* previousPtr = NULL;
-		NodeType* traversePtr = targetPtr->m_lChild;
-		while (traversePtr->m_rChild != NULL)
+		NodeType* pPrevious = NULL;
+		NodeType* pTraverse = pTarget->m_pLeftChild;
+		while (pTraverse->m_pRightChild != NULL)
 		{
-			previousPtr = traversePtr;
-			traversePtr = traversePtr->m_rChild;
+			pPrevious = pTraverse;
+			pTraverse = pTraverse->m_pRightChild;
 		}
 
-		if (previousPtr != NULL) previousPtr->m_rChild = traversePtr->m_lChild;
-		else targetPtr->m_lChild = traversePtr->m_lChild;
+		if (pPrevious != NULL) pPrevious->m_pRightChild = pTraverse->m_pLeftChild;
+		else pTarget->m_pLeftChild = pTraverse->m_pLeftChild;
 
-		targetPtr->m_key = traversePtr->m_key;
-		targetPtr->m_data = traversePtr->m_data;
-		delete traversePtr;
+		pTarget->m_key = pTraverse->m_key;
+		pTarget->m_data = pTraverse->m_data;
+		delete pTraverse;
 	}
 
-	void ReplaceWithInorderSuccessor(NodeType*& targetPtr)
+	void ReplaceWithInorderSuccessor(NodeType*& pTarget)
 	{
-		NodeType* previousPtr = NULL;
-		NodeType* traversePtr = targetPtr->m_rChild;
-		while (traversePtr->m_lChild != NULL)
+		NodeType* pPrevious = NULL;
+		NodeType* pTraverse = pTarget->m_pRightChild;
+		while (pTraverse->m_pLeftChild != NULL)
 		{
-			previousPtr = traversePtr;
-			traversePtr = traversePtr->m_lChild;
+			pPrevious = pTraverse;
+			pTraverse = pTraverse->m_pLeftChild;
 		}
 
-		if (previousPtr != NULL) previousPtr->m_lChild = traversePtr->m_rChild;
-		else targetPtr->m_rChild = traversePtr->m_rChild;
+		if (pPrevious != NULL) pPrevious->m_pLeftChild = pTraverse->m_pRightChild;
+		else pTarget->m_pRightChild = pTraverse->m_pRightChild;
 
-		targetPtr->m_key = traversePtr->m_key;
-		targetPtr->m_data = traversePtr->m_data;
-		delete traversePtr;
+		pTarget->m_key = pTraverse->m_key;
+		pTarget->m_data = pTraverse->m_data;
+		delete pTraverse;
 	}
 
 
 	//"to_do_while_traverse" 함수 포인터는 전위순회로 돌면서 각 노드에 수행할 작업을 위한 인터페이스임
 	//"optional_target_BST" BST 포인터는 앞선 "to_do_while_traverse" 작업에서 대상 BST 포인터가 필요한 경우를 위한 인수임.
-	void PreorderTraverse(void (*toDoWhileTraverse)(NodeType*, BSTTemplate*), BSTTemplate* optionalTargetBST)
+	void PreorderTraverse(void (*pToDoWhileTraverse)(NodeType*, BSTTemplate*), BSTTemplate* pOptionalTargetBST)
 	{
-		if (m_head == NULL) return;
+		if (m_pHead == NULL) return;
 
 		Stack<NodeType*> headStack;
-		NodeType* traversePtr = NULL;
-		headStack.Push(this->m_head);
-		while ((traversePtr = headStack.Pop()))
+		NodeType* pTraverse = NULL;
+		headStack.Push(this->m_pHead);
+		while ((pTraverse = headStack.Pop()))
 		{
-			(*toDoWhileTraverse)(traversePtr, optionalTargetBST);
+			(*pToDoWhileTraverse)(pTraverse, pOptionalTargetBST);
 
-			if (traversePtr->m_rChild != NULL) headStack.Push(traversePtr->m_rChild);
-			if (traversePtr->m_lChild != NULL) headStack.Push(traversePtr->m_lChild);
+			if (pTraverse->m_pRightChild != NULL) headStack.Push(pTraverse->m_pRightChild);
+			if (pTraverse->m_pLeftChild != NULL) headStack.Push(pTraverse->m_pLeftChild);
 		}
 	}
 
-	void InorderTraverse(void (*toDoWhileTraverse)(NodeType*, BSTTemplate*), BSTTemplate* optionalTargetBST)
+	void InorderTraverse(void (*pToDoWhileTraverse)(NodeType*, BSTTemplate*), BSTTemplate* pOptionalTargetBST)
 	{
-		if (m_head == NULL) return;
+		if (m_pHead == NULL) return;
 
 		Stack<NodeType*> headStack;
-		headStack.Push(m_head);
+		headStack.Push(m_pHead);
 		bool newLeftSpine = true;
 		while (!headStack.IsEmpty())
 		{
-			while (newLeftSpine && headStack.GetTop()->m_lChild)
+			while (newLeftSpine && headStack.GetTop()->m_pLeftChild)
 			{
-				headStack.Push(headStack.GetTop()->m_lChild);
+				headStack.Push(headStack.GetTop()->m_pLeftChild);
 			}
 
-			NodeType* traversePtr = headStack.Pop();
-			(*toDoWhileTraverse)(traversePtr, optionalTargetBST);
+			NodeType* pTraverse = headStack.Pop();
+			(*pToDoWhileTraverse)(pTraverse, pOptionalTargetBST);
 
-			if (traversePtr->m_rChild != NULL)
+			if (pTraverse->m_pRightChild != NULL)
 			{
-				headStack.Push(traversePtr->m_rChild);
+				headStack.Push(pTraverse->m_pRightChild);
 				newLeftSpine = true;
 			}
 			else
@@ -180,62 +180,62 @@ protected:
 		}
 	}
 
-	void PostorderTraverse(void (*toDoWhileTraverse)(NodeType*, BSTTemplate*), BSTTemplate* optionalTargetBST)
+	void PostorderTraverse(void (*pToDoWhileTraverse)(NodeType*, BSTTemplate*), BSTTemplate* pOptionalTargetBST)
 	{
-		if (m_head == NULL) return;
+		if (m_pHead == NULL) return;
 
 		Stack<NodeType*> headStack;
-		headStack.Push(m_head);
+		headStack.Push(m_pHead);
 		bool newLeftSpine = true;
 		bool newRightSpine = true;
 		while (!headStack.IsEmpty())
 		{
-			while (newLeftSpine && headStack.GetTop()->m_lChild)
+			while (newLeftSpine && headStack.GetTop()->m_pLeftChild)
 			{
-				headStack.Push(headStack.GetTop()->m_lChild);
+				headStack.Push(headStack.GetTop()->m_pLeftChild);
 			}
 
-			if (newRightSpine && headStack.GetTop()->m_rChild)
+			if (newRightSpine && headStack.GetTop()->m_pRightChild)
 			{
-				headStack.Push(headStack.GetTop()->m_rChild);
+				headStack.Push(headStack.GetTop()->m_pRightChild);
 				newLeftSpine = true;
 			}
 			else
 			{
-				(*toDoWhileTraverse)(headStack.GetTop(), optionalTargetBST);
+				(*pToDoWhileTraverse)(headStack.GetTop(), pOptionalTargetBST);
 
 				newLeftSpine = false;
-				NodeType* previousNode = headStack.Pop();
-				NodeType* presentNode = headStack.GetTop();
+				NodeType* pPreviousNode = headStack.Pop();
+				NodeType* pPpresentNode = headStack.GetTop();
 
-				if (presentNode && presentNode->m_rChild && (presentNode->m_rChild == previousNode)) newRightSpine = false;
+				if (pPpresentNode && pPpresentNode->m_pRightChild && (pPpresentNode->m_pRightChild == pPreviousNode)) newRightSpine = false;
 				else newRightSpine = true;
 			}
 		}
 	}
 
-	static void PrintTargetNode(NodeType* targetNode, BSTTemplate* dummyArgument)
+	static void PrintTargetNode(NodeType* pTargetNode, BSTTemplate* pDummyArgument)
 	{
-		targetNode->PrintNode();
+		pTargetNode->PrintNode();
 	}
 
-	static void RemoveChilds(NodeType* targetNode, BSTTemplate* dummyArgument)
+	static void RemoveChilds(NodeType* pTargetNode, BSTTemplate* pDummyArgument)
 	{
-		if (targetNode->m_lChild != NULL)
+		if (pTargetNode->m_pLeftChild != NULL)
 		{
-			delete targetNode->m_lChild;
-			targetNode->m_lChild = NULL;
+			delete pTargetNode->m_pLeftChild;
+			pTargetNode->m_pLeftChild = NULL;
 		}
-		if (targetNode->m_rChild != NULL)
+		if (pTargetNode->m_pRightChild != NULL)
 		{
-			delete targetNode->m_rChild;
-			targetNode->m_rChild = NULL;
+			delete pTargetNode->m_pRightChild;
+			pTargetNode->m_pRightChild = NULL;
 		}
 	}
 
-	static void CopyNode(NodeType* sourceNode, BSTTemplate* destBST)
+	static void CopyNode(NodeType* pSourceNode, BSTTemplate* pDestBST)
 	{
-		destBST->Insert(sourceNode);
+		pDestBST->Insert(pSourceNode);
 	}
 
 
@@ -243,7 +243,7 @@ public:
 	BSTTemplate()
 	{
 		cout << "BST is being made!" << endl;
-		m_head = NULL;
+		m_pHead = NULL;
 	}
 
 	~BSTTemplate()
@@ -254,15 +254,15 @@ public:
 
 	void Insert(int newKey, int newData)
 	{
-		NodeType* made_child = Search(newKey, &BSTTemplate::SetDummyChild);
-		made_child->m_key = newKey;
-		made_child->m_data = newData;
+		NodeType* pMadeChild = Search(newKey, &BSTTemplate::SetDummyChild);
+		pMadeChild->m_key = newKey;
+		pMadeChild->m_data = newData;
 	}
 
-	void Insert(NodeType* newNode)
+	void Insert(NodeType* pNewNode)
 	{
-		NodeType* made_child = Search(newNode->m_key, &BSTTemplate::SetDummyChild);
-		*made_child = *newNode;
+		NodeType* pMadeChild = Search(pNewNode->m_key, &BSTTemplate::SetDummyChild);
+		*pMadeChild = *pNewNode;
 	}
 
 	int Retrieve(int targetKey)
@@ -275,17 +275,17 @@ public:
 		Search(targetKey, &BSTTemplate::RemoveTarget);
 	}
 
-	void CopyFrom(BSTTemplate* targetBST)
+	void CopyFrom(BSTTemplate* pTargetBST)
 	{
-		targetBST->PreorderTraverse(&BSTTemplate::CopyNode, this);
+		pTargetBST->PreorderTraverse(&BSTTemplate::CopyNode, this);
 	}
 
 	void RemoveAll()
 	{
 		cout << "Remove all" << endl;
 		PostorderTraverse(&BSTTemplate::RemoveChilds, NULL);
-		delete m_head;
-		m_head = NULL;
+		delete m_pHead;
+		m_pHead = NULL;
 	}
 
 	void PreorderPrint()

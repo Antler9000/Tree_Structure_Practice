@@ -2,7 +2,7 @@
 
 int main()
 {
-	BST& testBST = *(new BST());
+	BST testBST =  BST();
 	testBST.Insert(5, 1515);
 	testBST.Insert(7, 2727);
 	testBST.Insert(3, 1313);
@@ -13,7 +13,7 @@ int main()
 	testBST.PreorderPrint();
 
 	cout << "copy test" << endl;
-	BST& copied_test_BST = *(new BST());
+	BST copied_test_BST = BST();
 	copied_test_BST.CopyFrom(&testBST);
 	copied_test_BST.PreorderPrint();
 
@@ -40,9 +40,6 @@ int main()
 
 	cout << "copy test" << endl;
 	copied_test_BST.PreorderPrint();
-
-	delete& testBST;
-	delete& copied_test_BST;
 
 	return 0;
 }
