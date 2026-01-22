@@ -11,16 +11,16 @@ class AVLNode
 	int m_key;
 	int m_data;
 	int m_heightFromLeaf;
-	AVLNode* m_lChild;
-	AVLNode* m_rChild;
+	AVLNode* m_pLeftChild;
+	AVLNode* m_pRightChild;
 
 	AVLNode(int newKey, int newData)
 	{
 		m_key = newKey;
 		m_data = newData;
 		m_heightFromLeaf = 0;
-		m_lChild = NULL;
-		m_rChild = NULL;
+		m_pLeftChild = NULL;
+		m_pRightChild = NULL;
 	}
 
 	inline void PrintNode()
@@ -31,32 +31,32 @@ class AVLNode
 
 class AVL_tree : public BSTTemplate<AVLNode>
 {
-protected :
-	void RemoveTarget(AVLNode*& targetPtr, Stack<AVLNode*>* ancesterNodeStack);
+protected:
+	void RemoveTarget(AVLNode*& pTarget, Stack<AVLNode*>* pRouteStack);
 
-	void ReplaceWithInorderPredecessor(AVLNode*& targetPtr, Stack<AVLNode*>* ancesterNodeStack);
+	void ReplaceWithInorderPredecessor(AVLNode*& pTarget, Stack<AVLNode*>* pRouteStack);
 
-	void ReplaceWithInorderSuccessor(AVLNode*& targetPtr, Stack<AVLNode*>* ancesterNodeStack);
+	void ReplaceWithInorderSuccessor(AVLNode*& pTarget, Stack<AVLNode*>* pRouteStack);
 
-	void BalancingAllTargetToRoot(Stack<AVLNode*>* ancesterNodeStack);
+	void BalancingAllTargetToRoot(Stack<AVLNode*>* pRouteStack);
 
-	void BalancingTargetNode(AVLNode* targetNode, AVLNode* parentNode);
+	void BalancingTargetNode(AVLNode* pTarget, AVLNode* pParent);
 
-	void LL_Rotation(AVLNode* targetNode, AVLNode* parentNode);
+	void LL_Rotation(AVLNode* pTarget, AVLNode* pParent);
 
-	void LR_Rotation(AVLNode* targetNode, AVLNode* parentNode);
+	void LR_Rotation(AVLNode* pTarget, AVLNode* pParent);
 
-	void RL_Rotation(AVLNode* targetNode, AVLNode* parentNode);
+	void RL_Rotation(AVLNode* pTarget, AVLNode* pParent);
 
-	void RR_Rotation(AVLNode* targetNode, AVLNode* parentNode);
+	void RR_Rotation(AVLNode* pTarget, AVLNode* pParent);
 
-	void UpdateHeight(AVLNode* targetNode)
+	void UpdateHeight(AVLNode* pTarget)
 	{
 		int heightFromLChild = 0;
 		int heightFromRChild = 0;
-		if (targetNode->m_lChild != NULL) heightFromLChild = 1 + targetNode->m_lChild->m_heightFromLeaf;
-		if (targetNode->m_rChild != NULL) heightFromRChild = 1 + targetNode->m_rChild->m_heightFromLeaf;
-		targetNode->m_heightFromLeaf = Max(heightFromLChild, heightFromRChild);
+		if (pTarget->m_pLeftChild != NULL) heightFromLChild = 1 + pTarget->m_pLeftChild->m_heightFromLeaf;
+		if (pTarget->m_pRightChild != NULL) heightFromRChild = 1 + pTarget->m_pRightChild->m_heightFromLeaf;
+		pTarget->m_heightFromLeaf = Max(heightFromLChild, heightFromRChild);
 	}
 
 	int Max(int a, int b)
@@ -64,7 +64,7 @@ protected :
 		return (a > b) ? a : b;
 	}
 
-public :
+public:
 	AVL_tree() : BSTTemplate() {}
 
 	void Insert(int newKey, int newData);
