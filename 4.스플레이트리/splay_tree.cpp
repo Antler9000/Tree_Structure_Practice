@@ -2,83 +2,83 @@
 
 int SplayTree::Retrieve(int targetKey)
 {
-	SplayNode* traversePtr = m_head;
-	SplayNode* fatherOfTraversePtr = NULL;
-	SplayNode* grandfatherOfTraversePtr = NULL;
-	SplayNode* greatgrandfatherOfTraversePtr = NULL;
-	while (traversePtr != NULL)
+	SplayNode* pTraversePtr = m_pHead;
+	SplayNode* pFatherOfTraversePtr = NULL;
+	SplayNode* pGrandFatherOfTraversePtr = NULL;
+	SplayNode* pGreatGrandFatherOfTraversePtr = NULL;
+	while (pTraversePtr != NULL)
 	{
-		if (targetKey < traversePtr->m_key)
+		if (targetKey < pTraversePtr->m_key)
 		{
-			greatgrandfatherOfTraversePtr = grandfatherOfTraversePtr;
-			grandfatherOfTraversePtr = fatherOfTraversePtr;
-			fatherOfTraversePtr = traversePtr;
-			traversePtr = traversePtr->m_lChild;
+			pGreatGrandFatherOfTraversePtr = pGrandFatherOfTraversePtr;
+			pGrandFatherOfTraversePtr = pFatherOfTraversePtr;
+			pFatherOfTraversePtr = pTraversePtr;
+			pTraversePtr = pTraversePtr->m_pLeftChild;
 		}
-		else if (traversePtr->m_key < targetKey)
+		else if (pTraversePtr->m_key < targetKey)
 		{
-			greatgrandfatherOfTraversePtr = grandfatherOfTraversePtr;
-			grandfatherOfTraversePtr = fatherOfTraversePtr;
-			fatherOfTraversePtr = traversePtr;
-			traversePtr = traversePtr->m_rChild;
+			pGreatGrandFatherOfTraversePtr = pGrandFatherOfTraversePtr;
+			pGrandFatherOfTraversePtr = pFatherOfTraversePtr;
+			pFatherOfTraversePtr = pTraversePtr;
+			pTraversePtr = pTraversePtr->m_pRightChild;
 		}
 		else
 		{
-			SplayTarget(greatgrandfatherOfTraversePtr, grandfatherOfTraversePtr, fatherOfTraversePtr, traversePtr);
+			SplayTarget(pGreatGrandFatherOfTraversePtr, pGrandFatherOfTraversePtr, pFatherOfTraversePtr, pTraversePtr);
 
-			return traversePtr->m_data;
+			return pTraversePtr->m_data;
 		}
 	}
 }
 
-void SplayTree::SplayTarget(SplayNode* greatgrandfatherOfTraversePtr, SplayNode* grandfatherOfTarget, SplayNode* fatherOfTarget, SplayNode* target)
+void SplayTree::SplayTarget(SplayNode* pGreatGrandFatherOfTarget, SplayNode* pGrandFatherOfTarget, SplayNode* pFatherOfTarget, SplayNode* pTarget)
 {
-	if (greatgrandfatherOfTraversePtr != NULL)
+	if (pGreatGrandFatherOfTarget != NULL)
 	{
-		if (greatgrandfatherOfTraversePtr->m_lChild == grandfatherOfTarget)
+		if (pGreatGrandFatherOfTarget->m_pLeftChild == pGrandFatherOfTarget)
 		{
-			if (grandfatherOfTarget->m_lChild == fatherOfTarget)
+			if (pGrandFatherOfTarget->m_pLeftChild == pFatherOfTarget)
 			{
-				if (fatherOfTarget->m_lChild == target) LL_ZigZig(greatgrandfatherOfTraversePtr->m_lChild, fatherOfTarget, target);
-				else	 LR_ZigZag(greatgrandfatherOfTraversePtr->m_lChild, fatherOfTarget, target);
+				if (pFatherOfTarget->m_pLeftChild == pTarget) LL_ZigZig(pGreatGrandFatherOfTarget->m_pLeftChild, pFatherOfTarget, pTarget);
+				else	 LR_ZigZag(pGreatGrandFatherOfTarget->m_pLeftChild, pFatherOfTarget, pTarget);
 			}
 			else
 			{
-				if (fatherOfTarget->m_lChild == target) RL_ZigZag(greatgrandfatherOfTraversePtr->m_lChild, fatherOfTarget, target);
-				else RR_ZigZig(greatgrandfatherOfTraversePtr->m_lChild, fatherOfTarget, target);
+				if (pFatherOfTarget->m_pLeftChild == pTarget) RL_ZigZag(pGreatGrandFatherOfTarget->m_pLeftChild, pFatherOfTarget, pTarget);
+				else RR_ZigZig(pGreatGrandFatherOfTarget->m_pLeftChild, pFatherOfTarget, pTarget);
 			}
 		}
 		else
 		{
-			if (grandfatherOfTarget->m_lChild == fatherOfTarget)
+			if (pGrandFatherOfTarget->m_pLeftChild == pFatherOfTarget)
 			{
-				if (fatherOfTarget->m_lChild == target) LL_ZigZig(greatgrandfatherOfTraversePtr->m_rChild, fatherOfTarget, target);
-				else	 LR_ZigZag(greatgrandfatherOfTraversePtr->m_rChild, fatherOfTarget, target);
+				if (pFatherOfTarget->m_pLeftChild == pTarget) LL_ZigZig(pGreatGrandFatherOfTarget->m_pRightChild, pFatherOfTarget, pTarget);
+				else	 LR_ZigZag(pGreatGrandFatherOfTarget->m_pRightChild, pFatherOfTarget, pTarget);
 			}
 			else
 			{
-				if (fatherOfTarget->m_lChild == target) RL_ZigZag(greatgrandfatherOfTraversePtr->m_rChild, fatherOfTarget, target);
-				else RR_ZigZig(greatgrandfatherOfTraversePtr->m_rChild, fatherOfTarget, target);
+				if (pFatherOfTarget->m_pLeftChild == pTarget) RL_ZigZag(pGreatGrandFatherOfTarget->m_pRightChild, pFatherOfTarget, pTarget);
+				else RR_ZigZig(pGreatGrandFatherOfTarget->m_pRightChild, pFatherOfTarget, pTarget);
 			}
 		}
 	}
-	else if (grandfatherOfTarget != NULL)
+	else if (pGrandFatherOfTarget != NULL)
 	{
-		if (grandfatherOfTarget->m_lChild == fatherOfTarget)
+		if (pGrandFatherOfTarget->m_pLeftChild == pFatherOfTarget)
 		{
-			if (fatherOfTarget->m_lChild == target) LL_ZigZig(m_head, fatherOfTarget, target);
-			else	 LR_ZigZag(m_head, fatherOfTarget, target);
+			if (pFatherOfTarget->m_pLeftChild == pTarget) LL_ZigZig(m_pHead, pFatherOfTarget, pTarget);
+			else	 LR_ZigZag(m_pHead, pFatherOfTarget, pTarget);
 		}
 		else
 		{
-			if (fatherOfTarget->m_lChild == target) RL_ZigZag(m_head, fatherOfTarget, target);
-			else RR_ZigZig(m_head, fatherOfTarget, target);
+			if (pFatherOfTarget->m_pLeftChild == pTarget) RL_ZigZag(m_pHead, pFatherOfTarget, pTarget);
+			else RR_ZigZig(m_pHead, pFatherOfTarget, pTarget);
 		}
 	}
-	else if (fatherOfTarget != NULL)
+	else if (pFatherOfTarget != NULL)
 	{
-		if (fatherOfTarget->m_lChild == target) L_Zig(m_head, target);
-		else R_Zig(m_head, target);
+		if (pFatherOfTarget->m_pLeftChild == pTarget) L_Zig(m_pHead, pTarget);
+		else R_Zig(m_pHead, pTarget);
 	}
 	else
 	{
