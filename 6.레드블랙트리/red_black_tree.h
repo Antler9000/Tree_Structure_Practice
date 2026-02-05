@@ -23,7 +23,8 @@ inline ostream& operator <<(ostream& out, NodeColor m_color)
 
 class RedBlackNode
 {
-	friend class BSTTemplate<RedBlackNode>;
+private:
+	friend class BST_Template<RedBlackNode>;
 	friend class RedBlackTree;
 
 	int m_key;
@@ -47,9 +48,9 @@ class RedBlackNode
 	}
 };
 
-class RedBlackTree : public BSTTemplate<RedBlackNode>
+class RedBlackTree : public BST_Template<RedBlackNode>
 {
-protected :
+private:
 	//삽입 메소드에서 삽입 위치를 찾기 위해 빈 리프노드 자리로 탐색하는 과정에서 매번 호출되는 메소드다.
 	//4노드가 있으면 이를 쪼개놓고 내려가는 로직을 수행한다.
 	void CheckAndResolve4NodesWhileDescent(Stack<RedBlackNode*>* pRouteStack)
@@ -616,7 +617,7 @@ protected :
 
 
 public :
-	RedBlackTree() : BSTTemplate() {}
+	RedBlackTree() : BST_Template() {}
 
 	void Insert(int newKey, int newData)
 	{

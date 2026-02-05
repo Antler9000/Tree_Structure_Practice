@@ -3,18 +3,19 @@
 
 #include "../2.이진탐색트리(반복문)/BST_using_while.h"
 
-class AVLNode
+class AVL_Node
 {
-	friend class BSTTemplate<AVLNode>;
-	friend class AVL_tree;
+private:
+	friend class BST_Template<AVL_Node>;
+	friend class AVL_Tree;
 
 	int m_key;
 	int m_data;
 	int m_heightFromLeaf;
-	AVLNode* m_pLeftChild;
-	AVLNode* m_pRightChild;
+	AVL_Node* m_pLeftChild;
+	AVL_Node* m_pRightChild;
 
-	AVLNode(int newKey, int newData)
+	AVL_Node(int newKey, int newData)
 	{
 		m_key = newKey;
 		m_data = newData;
@@ -29,28 +30,28 @@ class AVLNode
 	}
 };
 
-class AVL_tree : public BSTTemplate<AVLNode>
+class AVL_Tree : public BST_Template<AVL_Node>
 {
-protected:
-	void RemoveTarget(AVLNode*& pTarget, Stack<AVLNode*>* pRouteStack);
+private:
+	void RemoveTarget(AVL_Node*& pTarget, Stack<AVL_Node*>* pRouteStack);
 
-	void ReplaceWithInorderPredecessor(AVLNode*& pTarget, Stack<AVLNode*>* pRouteStack);
+	void ReplaceWithInorderPredecessor(AVL_Node*& pTarget, Stack<AVL_Node*>* pRouteStack);
 
-	void ReplaceWithInorderSuccessor(AVLNode*& pTarget, Stack<AVLNode*>* pRouteStack);
+	void ReplaceWithInorderSuccessor(AVL_Node*& pTarget, Stack<AVL_Node*>* pRouteStack);
 
-	void BalancingAllTargetToRoot(Stack<AVLNode*>* pRouteStack);
+	void BalancingAllTargetToRoot(Stack<AVL_Node*>* pRouteStack);
 
-	void BalancingTargetNode(AVLNode* pTarget, AVLNode* pParent);
+	void BalancingTargetNode(AVL_Node* pTarget, AVL_Node* pParent);
 
-	void LL_Rotation(AVLNode* pTarget, AVLNode* pParent);
+	void LL_Rotation(AVL_Node* pTarget, AVL_Node* pParent);
 
-	void LR_Rotation(AVLNode* pTarget, AVLNode* pParent);
+	void LR_Rotation(AVL_Node* pTarget, AVL_Node* pParent);
 
-	void RL_Rotation(AVLNode* pTarget, AVLNode* pParent);
+	void RL_Rotation(AVL_Node* pTarget, AVL_Node* pParent);
 
-	void RR_Rotation(AVLNode* pTarget, AVLNode* pParent);
+	void RR_Rotation(AVL_Node* pTarget, AVL_Node* pParent);
 
-	void UpdateHeight(AVLNode* pTarget)
+	void UpdateHeight(AVL_Node* pTarget)
 	{
 		int heightFromLChild = 0;
 		int heightFromRChild = 0;
@@ -65,7 +66,7 @@ protected:
 	}
 
 public:
-	AVL_tree() : BSTTemplate() {}
+	AVL_Tree() : BST_Template() {}
 
 	void Insert(int newKey, int newData);
 

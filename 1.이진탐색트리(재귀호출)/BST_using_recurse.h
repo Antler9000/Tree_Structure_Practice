@@ -6,16 +6,17 @@ using namespace std;
 
 class BST;
 
-class Node
+class BST_Node
 {
+private:
 	friend BST;
 
 	int	m_data;
 	int	m_key;
-	Node* m_pLeftChild;
-	Node* m_pRightChild;
+	BST_Node* m_pLeftChild;
+	BST_Node* m_pRightChild;
 
-	Node(int newKey, int newData)
+	BST_Node(int newKey, int newData)
 	{
 		m_key = newKey;
 		m_data = newData;
@@ -23,7 +24,7 @@ class Node
 		m_pRightChild = NULL;
 	}
 
-	~Node()
+	~BST_Node()
 	{
 		delete m_pLeftChild;
 		delete m_pRightChild;
@@ -32,14 +33,15 @@ class Node
 
 class BST
 {
-	Node* m_pHead;
+private:
+	BST_Node* m_pHead;
 
 	//부모가 가리키는 자식에 대한 정보를 NULL로 바꿔야하므로, 레퍼런스 인자로 받음
-	void RemoveTarget(Node*& pRemoveTargetNode);
+	void RemoveTarget(BST_Node*& pRemoveTargetNode);
 
-	void ReplaceWithInorderPredecessor(Node* pRemoveTargetNode);
+	void ReplaceWithInorderPredecessor(BST_Node* pRemoveTargetNode);
 
-	void ReplaceWithInorderSuccessor(Node* pRemoveTargetNode);
+	void ReplaceWithInorderSuccessor(BST_Node* pRemoveTargetNode);
 
 public:
 	BST()
@@ -55,10 +57,10 @@ public:
 	//삽입
 	void Insert(int newKey, int newData)
 	{
-		cout << "inserting Node.... (key : " << newKey << ", data : " << newData << " )" << endl;
+		cout << "inserting BST_Node.... (key : " << newKey << ", data : " << newData << " )" << endl;
 		if (m_pHead == NULL)
 		{
-			m_pHead = new Node(newKey, newData);
+			m_pHead = new BST_Node(newKey, newData);
 		}
 		else
 		{
@@ -67,7 +69,7 @@ public:
 		cout << "insert ended" << endl;
 	}
 
-	void InsertRecurse(Node* pSearchTargetNode, int newKey, int newData);
+	void InsertRecurse(BST_Node* pSearchTargetNode, int newKey, int newData);
 
 	//검색
 	int Retrieve(int retrieveTargetKey)
@@ -78,13 +80,13 @@ public:
 			return -1;
 		}
 
-		cout << "retrieving Node.... (key : " << retrieveTargetKey << " )" << endl;
+		cout << "retrieving BST_Node.... (key : " << retrieveTargetKey << " )" << endl;
 		int retrieveValue = RetrieveRecurse(m_pHead, retrieveTargetKey);
 		cout << "retrieving ended" << endl;
 		return retrieveValue;
 	}
 
-	int RetrieveRecurse(Node* pSearchTargetNode, int retrieiveTargetKey);
+	int RetrieveRecurse(BST_Node* pSearchTargetNode, int retrieiveTargetKey);
 
 	//삭제
 	void Remove(int removeTargetKey)
@@ -101,13 +103,13 @@ public:
 		}
 		else
 		{
-			cout << "removing Node.... (key : " << removeTargetKey << " )" << endl;
+			cout << "removing BST_Node.... (key : " << removeTargetKey << " )" << endl;
 			RemoveRecurse(m_pHead, removeTargetKey);
 			cout << "removing ended" << endl;
 		}
 	}
 
-	void RemoveRecurse(Node* pSearchTargetNode, int removeTargetKey);
+	void RemoveRecurse(BST_Node* pSearchTargetNode, int removeTargetKey);
 
 	//트리 복사
 	void CopyFrom(BST* pSourceBST)
@@ -129,7 +131,7 @@ public:
 		cout << "copying dended" << endl;
 	}
 
-	void CopyFromRecurse(Node* pSourceNode)
+	void CopyFromRecurse(BST_Node* pSourceNode)
 	{
 		Insert(pSourceNode->m_key, pSourceNode->m_data);
 		if (pSourceNode->m_pLeftChild != NULL) CopyFromRecurse(pSourceNode->m_pLeftChild);
@@ -157,7 +159,7 @@ public:
 		cout << "traverse ended" << endl;
 	}
 
-	void PreorderPrintRecurse(Node* pTargetNode)
+	void PreorderPrintRecurse(BST_Node* pTargetNode)
 	{
 		cout << "node m_key : " << pTargetNode->m_key << " / node m_data : " << pTargetNode->m_data << endl;
 		if (pTargetNode->m_pLeftChild != NULL) PreorderPrintRecurse(pTargetNode->m_pLeftChild);
@@ -178,7 +180,7 @@ public:
 		cout << "traverse ended" << endl;
 	}
 
-	void InorderPrintRecurse(Node* pTargetNode)
+	void InorderPrintRecurse(BST_Node* pTargetNode)
 	{
 		if (pTargetNode->m_pLeftChild != NULL) InorderPrintRecurse(pTargetNode->m_pLeftChild);
 		cout << "node m_key : " << pTargetNode->m_key << " / node m_data : " << pTargetNode->m_data << endl;
@@ -199,7 +201,7 @@ public:
 		cout << "traverse ended" << endl;
 	}
 
-	void PostOrderPrintRecurse(Node* pTargetNode)
+	void PostOrderPrintRecurse(BST_Node* pTargetNode)
 	{
 		if (pTargetNode->m_pLeftChild != NULL) PostOrderPrintRecurse(pTargetNode->m_pLeftChild);
 		if (pTargetNode->m_pRightChild != NULL) PostOrderPrintRecurse(pTargetNode->m_pRightChild);

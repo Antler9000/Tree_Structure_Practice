@@ -2,7 +2,7 @@
 
 int main()
 {
-	AVL_tree testTree = AVL_tree();
+	AVL_Tree testTree = AVL_Tree();
 
 	testTree.Insert(5, 55);
 	testTree.Insert(9, 99);
@@ -13,7 +13,7 @@ int main()
 	testTree.Insert(3, 33);
 	testTree.PreorderPrint();
 
-	AVL_tree copied_test_tree = AVL_tree();
+	AVL_Tree copied_test_tree = AVL_Tree();
 
 	copied_test_tree.CopyFrom(&testTree);
 	copied_test_tree.PreorderPrint();

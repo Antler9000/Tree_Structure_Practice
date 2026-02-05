@@ -136,7 +136,6 @@ public :
 	MinHeap() : Heap() {}
 };
 
-
 class MaxHeap : public Heap
 {
 	bool IsNotOrdered(int parentIndex, int childIndex)
@@ -154,6 +153,5 @@ class MaxHeap : public Heap
 public :
 	MaxHeap() : Heap() {}
 };
-
 
 #endif //HEAP_H

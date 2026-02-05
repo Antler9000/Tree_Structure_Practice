@@ -4,26 +4,28 @@
 #include <iostream>
 using namespace std;
 
-template <class T>
+template <class DataType>
 class Stack;
 
-template <class T>
+template <class DataType>
 class StackNode
 {
-	friend class Stack<T>;
-	T m_data;
+private:
+	friend class Stack<DataType>;
+	DataType m_data;
 	StackNode* m_pChild;
 
-	StackNode(T newData) {
+	StackNode(DataType newData) {
 		this->m_data = newData;
 		this->m_pChild = NULL;
 	}
 };
 
-template <class T>
+template <class DataType>
 class Stack
 {
-	StackNode<T>* m_pHead;
+private:
+	StackNode<DataType>* m_pHead;
 
 public:
 	Stack()
@@ -31,24 +33,24 @@ public:
 		m_pHead = NULL;
 	}
 
-	void Push(T data)
+	void Push(DataType data)
 	{
 		if (m_pHead == NULL)
 		{
-			m_pHead = new StackNode<T>(data);
+			m_pHead = new StackNode<DataType>(data);
 		}
 		else
 		{
-			StackNode<T>* pTraverse = m_pHead;
+			StackNode<DataType>* pTraverse = m_pHead;
 			while (pTraverse->m_pChild)
 			{
 				pTraverse = pTraverse->m_pChild;
 			}
-			pTraverse->m_pChild = new StackNode<T>(data);
+			pTraverse->m_pChild = new StackNode<DataType>(data);
 		}
 	}
 
-	T Pop()
+	DataType Pop()
 	{
 		if (m_pHead == NULL)
 		{
@@ -57,26 +59,26 @@ public:
 
 		if (m_pHead->m_pChild == NULL)
 		{
-			T temp = m_pHead->m_data;
+			DataType temp = m_pHead->m_data;
 			delete m_pHead;
 			m_pHead = NULL;
 			return temp;
 		}
 		else
 		{
-			StackNode<T>* pTraverse = m_pHead;
+			StackNode<DataType>* pTraverse = m_pHead;
 			while (pTraverse->m_pChild->m_pChild != NULL)
 			{
 				pTraverse = pTraverse->m_pChild;
 			}
-			T temp = pTraverse->m_pChild->m_data;
+			DataType temp = pTraverse->m_pChild->m_data;
 			delete pTraverse->m_pChild;
 			pTraverse->m_pChild = NULL;
 			return temp;
 		}
 	}
 
-	T GetTop()
+	DataType GetTop()
 	{
 		if (m_pHead == NULL)
 		{
@@ -89,7 +91,7 @@ public:
 		}
 		else
 		{
-			StackNode<T>* pTraverse = m_pHead;
+			StackNode<DataType>* pTraverse = m_pHead;
 			while (pTraverse->m_pChild->m_pChild)
 			{
 				pTraverse = pTraverse->m_pChild;
@@ -104,6 +106,5 @@ public:
 		else return false;
 	}
 };
-
 
 #endif //STACK_H

@@ -3,10 +3,10 @@
 
 using namespace std;
 
-void BST::ReplaceWithInorderPredecessor(Node* pRemoveTargetNode)
+void BST::ReplaceWithInorderPredecessor(BST_Node* pRemoveTargetNode)
 {
-	Node* pPreviousPtr = NULL;
-	Node* pTraversePtr = pRemoveTargetNode->m_pLeftChild;
+	BST_Node* pPreviousPtr = NULL;
+	BST_Node* pTraversePtr = pRemoveTargetNode->m_pLeftChild;
 	while (pTraversePtr->m_pRightChild != NULL)
 	{
 		pPreviousPtr = pTraversePtr;
@@ -20,10 +20,10 @@ void BST::ReplaceWithInorderPredecessor(Node* pRemoveTargetNode)
 	if (pPreviousPtr != NULL) pPreviousPtr->m_pRightChild = NULL;
 }
 
-void BST::ReplaceWithInorderSuccessor(Node* pRemoveTargetNode)
+void BST::ReplaceWithInorderSuccessor(BST_Node* pRemoveTargetNode)
 {
-	Node* pPrevious = NULL;
-	Node* pTraverse = pRemoveTargetNode->m_pRightChild;
+	BST_Node* pPrevious = NULL;
+	BST_Node* pTraverse = pRemoveTargetNode->m_pRightChild;
 	while (pTraverse->m_pLeftChild != NULL)
 	{
 		pPrevious = pTraverse;
@@ -37,7 +37,7 @@ void BST::ReplaceWithInorderSuccessor(Node* pRemoveTargetNode)
 	if (pPrevious != NULL) pPrevious->m_pLeftChild = NULL;
 }
 
-void BST::RemoveTarget(Node*& pRemoveTargetNode)
+void BST::RemoveTarget(BST_Node*& pRemoveTargetNode)
 {
 	if (pRemoveTargetNode->m_pLeftChild != NULL && pRemoveTargetNode->m_pRightChild != NULL)
 	{								//두 자식 모두 있는 경우엔, 중위선행자와 중위후속자 중에서 그냥 중위후속자(오른쪽 자식 트리에서 제일 작은 키 값의 노드)를 없애기로함
@@ -58,16 +58,16 @@ void BST::RemoveTarget(Node*& pRemoveTargetNode)
 	}
 }
 
-void BST::InsertRecurse(Node* pSearchTargetNode, int newKey, int newData)
+void BST::InsertRecurse(BST_Node* pSearchTargetNode, int newKey, int newData)
 {
 	if (newKey < pSearchTargetNode->m_key)
 	{
-		if(pSearchTargetNode->m_pLeftChild == NULL) pSearchTargetNode->m_pLeftChild = new Node(newKey, newData);
+		if(pSearchTargetNode->m_pLeftChild == NULL) pSearchTargetNode->m_pLeftChild = new BST_Node(newKey, newData);
 		else InsertRecurse(pSearchTargetNode->m_pLeftChild, newKey, newData);
 	}
 	else if(pSearchTargetNode->m_key < newKey)
 	{
-		if (pSearchTargetNode->m_pRightChild == NULL) pSearchTargetNode->m_pRightChild = new Node(newKey, newData);
+		if (pSearchTargetNode->m_pRightChild == NULL) pSearchTargetNode->m_pRightChild = new BST_Node(newKey, newData);
 		else InsertRecurse(pSearchTargetNode->m_pRightChild, newKey, newData);
 	}
 	else
@@ -76,7 +76,7 @@ void BST::InsertRecurse(Node* pSearchTargetNode, int newKey, int newData)
 	}
 }
 
-int BST::RetrieveRecurse(Node* pSearchTargetNode, int retrieveTargetKey)
+int BST::RetrieveRecurse(BST_Node* pSearchTargetNode, int retrieveTargetKey)
 {
 	if (retrieveTargetKey < pSearchTargetNode->m_key)
 	{
@@ -94,7 +94,7 @@ int BST::RetrieveRecurse(Node* pSearchTargetNode, int retrieveTargetKey)
 	}
 }
 
-void BST::RemoveRecurse(Node* pSearchTargetNode, int removeTargetKey)
+void BST::RemoveRecurse(BST_Node* pSearchTargetNode, int removeTargetKey)
 {
 	if (removeTargetKey < pSearchTargetNode->m_key)
 	{
