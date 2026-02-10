@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BST_using_recurse.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="main_BST_using_recurse.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
