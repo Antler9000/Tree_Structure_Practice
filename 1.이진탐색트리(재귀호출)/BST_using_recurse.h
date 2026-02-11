@@ -28,6 +28,7 @@ private:
 
 	~BST_Node()
 	{
+		cout << "removing node.... the node's key is " << m_key << ", m_pHead's data is " << m_data << endl;
 		delete m_pLeftChild;
 		delete m_pRightChild;
 	}
@@ -39,7 +40,7 @@ class BST
 private:
 	BST_Node<DataType>* m_pHead;
 
-	//부모가 가리키는 자식에 대한 정보를 NULL로 바꿔야하므로, 레퍼런스 인자로 받음
+	//(why using reference?) 부모가 가리키는 자식에 대한 정보를 NULL로 바꾸기 위함
 	void RemoveTarget(BST_Node<DataType>*& pRemoveTargetNode);
 
 	void ReplaceWithInorderPredecessor(BST_Node<DataType>* pRemoveTargetNode);
@@ -115,22 +116,23 @@ public:
 	void RemoveRecurse(BST_Node<DataType>* pSearchTargetNode, int removeTargetKey);
 
 	//트리 복사
-	void CopyFrom(BST<DataType>* pSourceBST)
+	//(why using reference?) 트리의 값전달로 인한 복사가 일어나지 않도록 하기 위함
+	void CopyFrom(BST<DataType>& pSourceBST)
 	{		
-		if (pSourceBST == NULL)
+		if (&pSourceBST == NULL)
 		{
 			cout << "cannot copying. becuase tree is null." << endl;
 			return;
 		}
 		
-		if (pSourceBST->m_pHead == NULL)
+		if (pSourceBST.m_pHead == NULL)
 		{
 			cout << "cannot coping. becuase m_pHead is null." << endl;
 			return;
 		}
 
 		cout << "copying tree..." << endl;
-		CopyFromRecurse(pSourceBST->m_pHead);
+		CopyFromRecurse(pSourceBST.m_pHead);
 		cout << "copying dended" << endl;
 	}
 
@@ -144,8 +146,12 @@ public:
 	//트리 삭제
 	void RemoveAll()
 	{
-		delete m_pHead;
-		m_pHead = NULL;
+		if (m_pHead != NULL)
+		{
+			cout << "removing all.... m_pHead's key is " << m_pHead->m_key << ", m_pHead's data is " << m_pHead->m_data << endl;
+			delete m_pHead;
+			m_pHead = NULL;
+		}
 	}
 
 	//전위 순회
