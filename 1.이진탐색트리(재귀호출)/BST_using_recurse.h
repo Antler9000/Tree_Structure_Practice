@@ -1,8 +1,13 @@
 #ifndef BST_USING_RECURSE_H
 #define BST_USING_RECURSE_H
 
-#include <iostream>
+#include <iostream>	//(essential) 에러 출력 함수와 순회 출력 함수에서 cin, cout을 사용함
+#include <string>		//(essential) 에러 출력 함수의 매개변수 타입으로 string 타입을 사용함
+
 using namespace std;
+
+#define ErrorPrint(statement) cout << "(Error : " << __func__ << ") " << statement << endl;
+#define WarningPrint(statement) cout << "(Warning : " << __func__ << ") " << statement << endl;
 
 template <typename DataType>
 class BST;
@@ -28,7 +33,6 @@ private:
 
 	~BST_Node()
 	{
-		cout << "removing node.... the node's key is " << m_key << ", m_pHead's data is " << m_data << endl;
 		delete m_pLeftChild;
 		delete m_pRightChild;
 	}
@@ -58,10 +62,8 @@ public:
 		RemoveAll();
 	}
 
-	//삽입
 	void Insert(int newKey, DataType newData)
 	{
-		cout << "inserting BST_Node.... (key : " << newKey << ", data : " << newData << " )" << endl;
 		if (m_pHead == NULL)
 		{
 			m_pHead = new BST_Node<DataType>(newKey, newData);
@@ -70,34 +72,32 @@ public:
 		{
 			InsertRecurse(m_pHead, newKey, newData);
 		}
-		cout << "insert ended" << endl;
 	}
 
 	void InsertRecurse(BST_Node<DataType>* pSearchTargetNode, int newKey, DataType newData);
 
-	//검색
 	int Retrieve(int retrieveTargetKey)
 	{
 		if (m_pHead == NULL)
 		{
-			cout << "cannot retrieve. becuase tree is null." << endl;
+			WarningPrint("cannot retrieve. becuase tree is null.");
+
 			return -1;
 		}
 
-		cout << "retrieving BST_Node.... (key : " << retrieveTargetKey << " )" << endl;
 		DataType retrieveValue = RetrieveRecurse(m_pHead, retrieveTargetKey);
-		cout << "retrieving ended" << endl;
+
 		return retrieveValue;
 	}
 
 	DataType RetrieveRecurse(BST_Node<DataType>* pSearchTargetNode, int retrieiveTargetKey);
 
-	//삭제
 	void Remove(int removeTargetKey)
 	{
 		if (m_pHead == NULL)
 		{
-			cout << "cannot remove. becuase tree is null." << endl;
+			WarningPrint("cannot remove. becuase tree is null.");
+
 			return;
 		}
 		
@@ -107,9 +107,7 @@ public:
 		}
 		else
 		{
-			cout << "removing BST_Node.... (key : " << removeTargetKey << " )" << endl;
 			RemoveRecurse(m_pHead, removeTargetKey);
-			cout << "removing ended" << endl;
 		}
 	}
 
@@ -121,19 +119,17 @@ public:
 	{		
 		if (&pSourceBST == NULL)
 		{
-			cout << "cannot copying. becuase tree is null." << endl;
+			WarningPrint("cannot copying. becuase tree is null.");
 			return;
 		}
 		
 		if (pSourceBST.m_pHead == NULL)
 		{
-			cout << "cannot coping. becuase m_pHead is null." << endl;
+			WarningPrint("cannot coping. becuase m_pHead is null.");
 			return;
 		}
 
-		cout << "copying tree..." << endl;
 		CopyFromRecurse(pSourceBST.m_pHead);
-		cout << "copying dended" << endl;
 	}
 
 	void CopyFromRecurse(BST_Node<DataType>* pSourceNode)
@@ -148,7 +144,6 @@ public:
 	{
 		if (m_pHead != NULL)
 		{
-			cout << "removing all.... m_pHead's key is " << m_pHead->m_key << ", m_pHead's data is " << m_pHead->m_data << endl;
 			delete m_pHead;
 			m_pHead = NULL;
 		}
@@ -159,7 +154,7 @@ public:
 	{
 		if (m_pHead == NULL)
 		{
-			cout << "cannot traverse print. becuase m_pHead is null." << endl;
+			WarningPrint("cannot traverse print. becuase m_pHead is null.");
 			return;
 		}
 
@@ -180,7 +175,7 @@ public:
 	{
 		if (m_pHead == NULL)
 		{
-			cout << "cannot traverse print. becuase m_pHead is null." << endl;
+			WarningPrint("cannot traverse print. becuase m_pHead is null.");
 			return;
 		}
 
@@ -201,7 +196,7 @@ public:
 	{
 		if (m_pHead == NULL)
 		{
-			cout << "cannot traverse print. becuase m_pHead is null." << endl;
+			WarningPrint("cannot traverse print. becuase m_pHead is null.");
 			return;
 		}
 
@@ -229,10 +224,13 @@ void BST<DataType>::ReplaceWithInorderPredecessor(BST_Node<DataType>* pRemoveTar
 		pPreviousPtr = pTraversePtr;
 		pTraversePtr = pTraversePtr->m_pRightChild;
 	}
+
 	if (pPreviousPtr != NULL) pPreviousPtr->m_pRightChild = pTraversePtr->m_pLeftChild;
 	else pRemoveTargetNode->m_pLeftChild = pTraversePtr->m_pLeftChild;
+
 	pRemoveTargetNode->m_key = pTraversePtr->m_key;
 	pRemoveTargetNode->m_data = pTraversePtr->m_data;
+
 	delete pTraversePtr;
 	if (pPreviousPtr != NULL) pPreviousPtr->m_pRightChild = NULL;
 }
@@ -247,10 +245,13 @@ void BST<DataType>::ReplaceWithInorderSuccessor(BST_Node<DataType>* pRemoveTarge
 		pPrevious = pTraverse;
 		pTraverse = pTraverse->m_pLeftChild;
 	}
+
 	if (pPrevious != NULL) pPrevious->m_pLeftChild = pTraverse->m_pRightChild;
 	else pRemoveTargetNode->m_pRightChild = pTraverse->m_pRightChild;
+
 	pRemoveTargetNode->m_key = pTraverse->m_key;
 	pRemoveTargetNode->m_data = pTraverse->m_data;
+
 	delete pTraverse;
 	if (pPrevious != NULL) pPrevious->m_pLeftChild = NULL;
 }
@@ -258,8 +259,9 @@ void BST<DataType>::ReplaceWithInorderSuccessor(BST_Node<DataType>* pRemoveTarge
 template <typename DataType>
 void BST<DataType>::RemoveTarget(BST_Node<DataType>*& pRemoveTargetNode)
 {
+	//두 자식 모두 있는 경우엔, 중위선행자와 중위후속자 중에서 그냥 중위후속자(오른쪽 자식 트리에서 제일 작은 키 값의 노드)를 없애기로함
 	if (pRemoveTargetNode->m_pLeftChild != NULL && pRemoveTargetNode->m_pRightChild != NULL)
-	{								//두 자식 모두 있는 경우엔, 중위선행자와 중위후속자 중에서 그냥 중위후속자(오른쪽 자식 트리에서 제일 작은 키 값의 노드)를 없애기로함
+	{						
 		ReplaceWithInorderSuccessor(pRemoveTargetNode);
 	}
 	else if (pRemoveTargetNode->m_pLeftChild == NULL && pRemoveTargetNode->m_pRightChild != NULL)
@@ -292,7 +294,7 @@ void BST<DataType>::InsertRecurse(BST_Node<DataType>* pSearchTargetNode, int new
 	}
 	else
 	{
-		cout << "cannot insert! key is same! If it is dummy_room_node, then it is okay" << endl;
+		ErrorPrint("cannot insert because there is same key in tree already!");
 	}
 }
 
@@ -302,12 +304,12 @@ DataType BST<DataType>::RetrieveRecurse(BST_Node<DataType>* pSearchTargetNode, i
 	if (retrieveTargetKey < pSearchTargetNode->m_key)
 	{
 		if (pSearchTargetNode->m_pLeftChild != NULL) return RetrieveRecurse(pSearchTargetNode->m_pLeftChild, retrieveTargetKey);
-		else  cout << "there is no such key in searching." << endl;
+		else  ErrorPrint("there is no such key in searching.");
 	}
 	else if (retrieveTargetKey > pSearchTargetNode->m_key)
 	{
 		if (pSearchTargetNode->m_pRightChild != NULL) return RetrieveRecurse(pSearchTargetNode->m_pRightChild, retrieveTargetKey);
-		else  cout << "there is no such key in searching." << endl;
+		else  ErrorPrint("there is no such key in searching.");
 	}
 	else
 	{
@@ -342,7 +344,7 @@ void BST<DataType>::RemoveRecurse(BST_Node<DataType>* pSearchTargetNode, int rem
 	}
 	else
 	{
-		cout << "should not reach here while RemoveRecurse()" << endl;
+		ErrorPrint("should not reach here");
 	}
 }
 
