@@ -4,110 +4,128 @@
 
 int main()
 {
-	cout << "testing 1 : BST<int>--------------------------------------------------------------------------" << endl;
+	cout << endl << "testing 1 : BST<int>--------------------------------------------------------------------------" << endl;
 
-	cout << endl << "선언" << endl;
-	BST<int> int_test_BST;
+	BST<int> intTestBST;
 	
 	cout << endl << "삽입" << endl;
-	int_test_BST.Insert(5, 1515);
-	int_test_BST.Insert(7, 2727);
-	int_test_BST.Insert(3, 1313);
-	int_test_BST.Insert(4, 2424);
-	int_test_BST.Insert(6, 3636);
-	int_test_BST.PreorderPrint();
+	intTestBST.Insert(5, 1515);
+	intTestBST.Insert(7, 2727);
+	intTestBST.Insert(3, 1313);
+	intTestBST.Insert(4, 2424);
+	intTestBST.Insert(6, 3636);
+	intTestBST.PreorderPrint();
 
+	cout << endl << "검색" << endl;
+	int intRetrievedData = 0;
+	intTestBST.Retrieve(5, intRetrievedData);
+	cout << "retrieve key : " << 5 << ", retrieved data : " << intRetrievedData << endl;
+	intTestBST.Retrieve(3, intRetrievedData);
+	cout << "retrieve key : " << 3 << ", retrieved data : " << intRetrievedData << endl;
+	
 	cout << endl << "복사 및 전체 삭제" << endl;
-	BST<int> int_copy_test_BST;
-	int_copy_test_BST.CopyFrom(int_test_BST);
-	int_copy_test_BST.PreorderPrint();
-	int_copy_test_BST.RemoveAll();
+	BST<int> intCopyTestBST;
+	intCopyTestBST.CopyFrom(intTestBST);
+	intCopyTestBST.PreorderPrint();
+	intCopyTestBST.RemoveAll();
 
 	cout << endl << "요소별 삭제" << endl;
-	int_test_BST.Remove(7);
-	int_test_BST.PreorderPrint();
+	intTestBST.Remove(7);
+	intTestBST.PreorderPrint();
 
-	int_test_BST.Remove(5);
-	int_test_BST.PreorderPrint();
+	intTestBST.Remove(5);
+	intTestBST.PreorderPrint();
 
-	int_test_BST.Remove(6);
-	int_test_BST.PreorderPrint();
+	intTestBST.Remove(6);
+	intTestBST.PreorderPrint();
 
-	int_test_BST.Remove(4);
-	int_test_BST.PreorderPrint();
+	intTestBST.Remove(4);
+	intTestBST.PreorderPrint();
 
-	int_test_BST.Remove(3);
-	int_test_BST.PreorderPrint();
+	intTestBST.Remove(3);
+	intTestBST.PreorderPrint();
 
-	cout << "testing 2 : BST<float>--------------------------------------------------------------------------" << endl;
+	cout << endl << "testing 2 : BST<float>--------------------------------------------------------------------------" << endl;
 
-	cout << endl << "선언" << endl;
-	BST<float> float_test_BST;
+	BST<float> floatTestBST;
 	
 	cout << endl << "삽입" << endl;
-	float_test_BST.Insert(5, 1.515);
-	float_test_BST.Insert(7, 2.727);
-	float_test_BST.Insert(3, 1.313);
-	float_test_BST.Insert(4, 2.424);
-	float_test_BST.Insert(6, 3.636);
-	float_test_BST.PreorderPrint();
+	floatTestBST.Insert(5, 1.515f);
+	floatTestBST.Insert(7, 2.727f);
+	floatTestBST.Insert(3, 1.313f);
+	floatTestBST.Insert(4, 2.424f);
+	floatTestBST.Insert(6, 3.636f);
+	floatTestBST.PreorderPrint();
+
+	cout << endl << "검색" << endl;
+	float floatRetrievedData = 0;
+	floatTestBST.Retrieve(5, floatRetrievedData);
+	cout << "retrieve key : " << 5 << ", retrieved data : " << floatRetrievedData << endl;
+	floatTestBST.Retrieve(3, floatRetrievedData);
+	cout << "retrieve key : " << 3 << ", retrieved data : " << floatRetrievedData << endl;
 
 	cout << endl << "복사 및 전체 삭제" << endl;
-	BST<float> float_copy_test_BST;
-	float_copy_test_BST.CopyFrom(float_test_BST);
-	float_copy_test_BST.PreorderPrint();
-	float_copy_test_BST.RemoveAll();
+	BST<float> floatCopyTestBST;
+	floatCopyTestBST.CopyFrom(floatTestBST);
+	floatCopyTestBST.PreorderPrint();
+	floatCopyTestBST.RemoveAll();
 
 	cout << endl << "요소별 삭제" << endl;
-	float_test_BST.Remove(7);
-	float_test_BST.PreorderPrint();
+	floatTestBST.Remove(7);
+	floatTestBST.PreorderPrint();
 
-	float_test_BST.Remove(5);
-	float_test_BST.PreorderPrint();
+	floatTestBST.Remove(5);
+	floatTestBST.PreorderPrint();
 
-	float_test_BST.Remove(6);
-	float_test_BST.PreorderPrint();
+	floatTestBST.Remove(6);
+	floatTestBST.PreorderPrint();
 
-	float_test_BST.Remove(4);
-	float_test_BST.PreorderPrint();
+	floatTestBST.Remove(4);
+	floatTestBST.PreorderPrint();
 
-	float_test_BST.Remove(3);
-	float_test_BST.PreorderPrint();
+	floatTestBST.Remove(3);
+	floatTestBST.PreorderPrint();
 
-	cout << "testing 3 : BST<string>--------------------------------------------------------------------------" << endl;
+	cout << endl << "testing 3 : BST<string>--------------------------------------------------------------------------" << endl;
 
-	cout << endl << "선언" << endl;
-	BST<string> string_test_BST;
+	BST<string> stringTestBST;
 	
 	cout << endl << "삽입" << endl;
-	string_test_BST.Insert(5, "Panther");
-	string_test_BST.Insert(7, "Sherman");
-	string_test_BST.Insert(3, "Crusader");
-	string_test_BST.Insert(4, "Comet");
-	string_test_BST.Insert(6, "Tiger");
-	string_test_BST.PreorderPrint();
+	stringTestBST.Insert(5, "Panther");
+	stringTestBST.Insert(7, "Sherman");
+	stringTestBST.Insert(3, "Crusader");
+	stringTestBST.Insert(4, "Comet");
+	stringTestBST.Insert(6, "Tiger");
+	stringTestBST.PreorderPrint();
+
+	cout << endl << "검색" << endl;
+	string stringRetrievedData = "";
+	stringTestBST.Retrieve(5, stringRetrievedData);
+	cout << "retrieve key : " << 5 << ", retrieved data : " << stringRetrievedData << endl;
+	stringTestBST.Retrieve(3, stringRetrievedData);
+	cout << "retrieve key : " << 3 << ", retrieved data : " << stringRetrievedData << endl;
 
 	cout << endl << "복사 및 전체 삭제" << endl;
-	BST<string> string_copy_test_BST;
-	string_copy_test_BST.CopyFrom(string_test_BST);
-	string_copy_test_BST.PreorderPrint();
-	string_copy_test_BST.RemoveAll();
+	BST<string> stringCopyTestBST;
+	stringCopyTestBST.CopyFrom(stringTestBST);
+	stringCopyTestBST.PreorderPrint();
+	stringCopyTestBST.RemoveAll();
 
 	cout << endl << "요소별 삭제" << endl;
-	string_test_BST.Remove(7);
-	string_test_BST.PreorderPrint();
+	stringTestBST.Remove(7);
+	stringTestBST.PreorderPrint();
 
-	string_test_BST.Remove(5);
-	string_test_BST.PreorderPrint();
+	stringTestBST.Remove(5);
+	stringTestBST.PreorderPrint();
 
-	string_test_BST.Remove(6);
-	string_test_BST.PreorderPrint();
+	stringTestBST.Remove(6);
+	stringTestBST.PreorderPrint();
 
-	string_test_BST.Remove(4);
-	string_test_BST.PreorderPrint();
+	stringTestBST.Remove(4);
+	stringTestBST.PreorderPrint();
 
-	string_test_BST.Remove(3);
-	string_test_BST.PreorderPrint();
+	stringTestBST.Remove(3);
+	stringTestBST.PreorderPrint();
 
 	return 0;
 }

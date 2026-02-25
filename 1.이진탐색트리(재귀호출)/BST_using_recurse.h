@@ -44,12 +44,12 @@ class BST
 private:
 	BST_Node<DataType>* m_pHead;
 
-	//(why using reference?) 부모가 가리키는 자식에 대한 정보를 NULL로 바꾸기 위함
-	void RemoveTarget(BST_Node<DataType>*& pRemoveTargetNode);
+	//(why using reference) 부모가 가리키는 자식에 대한 정보를 NULL로 바꾸기 위함
+	bool RemoveTarget(BST_Node<DataType>*& pRemoveTargetNode);
 
-	void ReplaceWithInorderPredecessor(BST_Node<DataType>* pRemoveTargetNode);
+	bool ReplaceWithInorderPredecessor(BST_Node<DataType>* pRemoveTargetNode);
 
-	void ReplaceWithInorderSuccessor(BST_Node<DataType>* pRemoveTargetNode);
+	bool ReplaceWithInorderSuccessor(BST_Node<DataType>* pRemoveTargetNode);
 
 public:
 	BST()
@@ -62,81 +62,83 @@ public:
 		RemoveAll();
 	}
 
-	void Insert(int newKey, DataType newData)
+	bool Insert(int newKey, DataType newData)
 	{
 		if (m_pHead == NULL)
 		{
 			m_pHead = new BST_Node<DataType>(newKey, newData);
+
+			return true;
 		}
 		else
 		{
-			InsertRecurse(m_pHead, newKey, newData);
+			return InsertRecurse(m_pHead, newKey, newData);
 		}
 	}
 
-	void InsertRecurse(BST_Node<DataType>* pSearchTargetNode, int newKey, DataType newData);
+	bool InsertRecurse(BST_Node<DataType>* pSearchTargetNode, int newKey, DataType newData);
 
-	int Retrieve(int retrieveTargetKey)
+	bool Retrieve(int retrieveTargetKey, DataType& outData)
 	{
 		if (m_pHead == NULL)
 		{
 			WarningPrint("cannot retrieve. becuase tree is null.");
 
-			return -1;
+			return false;
 		}
 
-		DataType retrieveValue = RetrieveRecurse(m_pHead, retrieveTargetKey);
-
-		return retrieveValue;
+		return RetrieveRecurse(m_pHead, retrieveTargetKey, outData);
 	}
 
-	DataType RetrieveRecurse(BST_Node<DataType>* pSearchTargetNode, int retrieiveTargetKey);
+	bool RetrieveRecurse(BST_Node<DataType>* pSearchTargetNode, int retrieiveTargetKey, DataType& outData);
 
-	void Remove(int removeTargetKey)
+	bool Remove(int removeTargetKey)
 	{
 		if (m_pHead == NULL)
 		{
 			WarningPrint("cannot remove. becuase tree is null.");
 
-			return;
+			return false;
 		}
 		
 		if (m_pHead->m_key == removeTargetKey)
 		{
-			RemoveTarget(m_pHead);
+			return RemoveTarget(m_pHead);
 		}
 		else
 		{
-			RemoveRecurse(m_pHead, removeTargetKey);
+			return RemoveRecurse(m_pHead, removeTargetKey);
 		}
 	}
 
-	void RemoveRecurse(BST_Node<DataType>* pSearchTargetNode, int removeTargetKey);
+	bool RemoveRecurse(BST_Node<DataType>* pSearchTargetNode, int removeTargetKey);
 
 	//트리 복사
-	//(why using reference?) 트리의 값전달로 인한 복사가 일어나지 않도록 하기 위함
-	void CopyFrom(BST<DataType>& pSourceBST)
+	//(why using reference) 트리의 값전달로 인한 복사가 일어나지 않도록 하기 위함
+	bool CopyFrom(BST<DataType>& pSourceBST)
 	{		
 		if (&pSourceBST == NULL)
 		{
 			WarningPrint("cannot copying. becuase tree is null.");
-			return;
+			return false;
 		}
 		
 		if (pSourceBST.m_pHead == NULL)
 		{
 			WarningPrint("cannot coping. becuase m_pHead is null.");
-			return;
+			return false;
 		}
 
-		CopyFromRecurse(pSourceBST.m_pHead);
+		return CopyFromRecurse(pSourceBST.m_pHead);
 	}
 
-	void CopyFromRecurse(BST_Node<DataType>* pSourceNode)
+	bool CopyFromRecurse(BST_Node<DataType>* pSourceNode)
 	{
-		Insert(pSourceNode->m_key, pSourceNode->m_data);
-		if (pSourceNode->m_pLeftChild != NULL) CopyFromRecurse(pSourceNode->m_pLeftChild);
-		if (pSourceNode->m_pRightChild != NULL) CopyFromRecurse(pSourceNode->m_pRightChild);
+		bool result = Insert(pSourceNode->m_key, pSourceNode->m_data);
+		if (pSourceNode->m_pLeftChild != NULL) result &= CopyFromRecurse(pSourceNode->m_pLeftChild);
+		if (pSourceNode->m_pRightChild != NULL) result &= CopyFromRecurse(pSourceNode->m_pRightChild);
+
+		return result;
 	}
 
 	//트리 삭제
@@ -215,7 +217,7 @@ public:
 };
 
 template <typename DataType>
-void BST<DataType>::ReplaceWithInorderPredecessor(BST_Node<DataType>* pRemoveTargetNode)
+bool BST<DataType>::ReplaceWithInorderPredecessor(BST_Node<DataType>* pRemoveTargetNode)
 {
 	BST_Node<DataType>* pPreviousPtr = NULL;
 	BST_Node<DataType>* pTraversePtr = pRemoveTargetNode->m_pLeftChild;
@@ -233,10 +235,12 @@ void BST<DataType>::ReplaceWithInorderPredecessor(BST_Node<DataType>* pRemoveTar
 
 	delete pTraversePtr;
 	if (pPreviousPtr != NULL) pPreviousPtr->m_pRightChild = NULL;
+
+	return true;
 }
 
 template <typename DataType>
-void BST<DataType>::ReplaceWithInorderSuccessor(BST_Node<DataType>* pRemoveTargetNode)
+bool BST<DataType>::ReplaceWithInorderSuccessor(BST_Node<DataType>* pRemoveTargetNode)
 {
 	BST_Node<DataType>* pPrevious = NULL;
 	BST_Node<DataType>* pTraverse = pRemoveTargetNode->m_pRightChild;
@@ -254,97 +258,128 @@ void BST<DataType>::ReplaceWithInorderSuccessor(BST_Node<DataType>* pRemoveTarge
 
 	delete pTraverse;
 	if (pPrevious != NULL) pPrevious->m_pLeftChild = NULL;
+
+	return true;
 }
 
 template <typename DataType>
-void BST<DataType>::RemoveTarget(BST_Node<DataType>*& pRemoveTargetNode)
+bool BST<DataType>::RemoveTarget(BST_Node<DataType>*& pRemoveTargetNode)
 {
 	//두 자식 모두 있는 경우엔, 중위선행자와 중위후속자 중에서 그냥 중위후속자(오른쪽 자식 트리에서 제일 작은 키 값의 노드)를 없애기로함
 	if (pRemoveTargetNode->m_pLeftChild != NULL && pRemoveTargetNode->m_pRightChild != NULL)
 	{						
-		ReplaceWithInorderSuccessor(pRemoveTargetNode);
+		return ReplaceWithInorderSuccessor(pRemoveTargetNode);
 	}
 	else if (pRemoveTargetNode->m_pLeftChild == NULL && pRemoveTargetNode->m_pRightChild != NULL)
 	{
-		ReplaceWithInorderSuccessor(pRemoveTargetNode);
+		return ReplaceWithInorderSuccessor(pRemoveTargetNode);
 	}
 	else if (pRemoveTargetNode->m_pLeftChild != NULL && pRemoveTargetNode->m_pRightChild == NULL)
 	{
-		ReplaceWithInorderPredecessor(pRemoveTargetNode);
+		return ReplaceWithInorderPredecessor(pRemoveTargetNode);
 	}
 	else
 	{
 		delete pRemoveTargetNode;
 		pRemoveTargetNode = NULL;
+
+		return true;
 	}
 }
 
 template <typename DataType>
-void BST<DataType>::InsertRecurse(BST_Node<DataType>* pSearchTargetNode, int newKey, DataType newData)
+bool BST<DataType>::InsertRecurse(BST_Node<DataType>* pSearchTargetNode, int newKey, DataType newData)
 {
 	if (newKey < pSearchTargetNode->m_key)
 	{
-		if (pSearchTargetNode->m_pLeftChild == NULL) pSearchTargetNode->m_pLeftChild = new BST_Node<DataType>(newKey, newData);
-		else InsertRecurse(pSearchTargetNode->m_pLeftChild, newKey, newData);
+		if (pSearchTargetNode->m_pLeftChild == NULL)
+		{
+			pSearchTargetNode->m_pLeftChild = new BST_Node<DataType>(newKey, newData);
+			return true;
+		}
+		else
+		{
+			return InsertRecurse(pSearchTargetNode->m_pLeftChild, newKey, newData);
+		}
 	}
 	else if (pSearchTargetNode->m_key < newKey)
 	{
-		if (pSearchTargetNode->m_pRightChild == NULL) pSearchTargetNode->m_pRightChild = new BST_Node<DataType>(newKey, newData);
-		else InsertRecurse(pSearchTargetNode->m_pRightChild, newKey, newData);
+		if (pSearchTargetNode->m_pRightChild == NULL)
+		{
+			pSearchTargetNode->m_pRightChild = new BST_Node<DataType>(newKey, newData);
+			return true;
+		}
+		else
+		{
+			return InsertRecurse(pSearchTargetNode->m_pRightChild, newKey, newData);
+		}
 	}
 	else
 	{
 		ErrorPrint("cannot insert because there is same key in tree already!");
+
+		return false;
 	}
 }
 
 template <typename DataType>
-DataType BST<DataType>::RetrieveRecurse(BST_Node<DataType>* pSearchTargetNode, int retrieveTargetKey)
+bool BST<DataType>::RetrieveRecurse(BST_Node<DataType>* pSearchTargetNode, int retrieveTargetKey, DataType& outData)
 {
 	if (retrieveTargetKey < pSearchTargetNode->m_key)
 	{
-		if (pSearchTargetNode->m_pLeftChild != NULL) return RetrieveRecurse(pSearchTargetNode->m_pLeftChild, retrieveTargetKey);
-		else  ErrorPrint("there is no such key in searching.");
+		if (pSearchTargetNode->m_pLeftChild != NULL) return RetrieveRecurse(pSearchTargetNode->m_pLeftChild, retrieveTargetKey, outData);
+		else
+		{
+			ErrorPrint("there is no such key in searching.");
+			return false;
+		}
 	}
 	else if (retrieveTargetKey > pSearchTargetNode->m_key)
 	{
-		if (pSearchTargetNode->m_pRightChild != NULL) return RetrieveRecurse(pSearchTargetNode->m_pRightChild, retrieveTargetKey);
-		else  ErrorPrint("there is no such key in searching.");
+		if (pSearchTargetNode->m_pRightChild != NULL) return RetrieveRecurse(pSearchTargetNode->m_pRightChild, retrieveTargetKey, outData);
+		else
+		{
+			ErrorPrint("there is no such key in searching.");
+			return false;
+		}
 	}
 	else
 	{
-		return pSearchTargetNode->m_data;
+		outData = pSearchTargetNode->m_data;
+		return true;
 	}
 }
 
 template <typename DataType>
-void BST<DataType>::RemoveRecurse(BST_Node<DataType>* pSearchTargetNode, int removeTargetKey)
+bool BST<DataType>::RemoveRecurse(BST_Node<DataType>* pSearchTargetNode, int removeTargetKey)
 {
 	if (removeTargetKey < pSearchTargetNode->m_key)
 	{
 		if (pSearchTargetNode->m_pLeftChild->m_key == removeTargetKey)
 		{
-			RemoveTarget(pSearchTargetNode->m_pLeftChild);
+			return RemoveTarget(pSearchTargetNode->m_pLeftChild);
 		}
 		else
 		{
-			RemoveRecurse(pSearchTargetNode->m_pLeftChild, removeTargetKey);
+			return RemoveRecurse(pSearchTargetNode->m_pLeftChild, removeTargetKey);
 		}
 	}
 	else if (removeTargetKey > pSearchTargetNode->m_key)
 	{
 		if (pSearchTargetNode->m_pRightChild->m_key == removeTargetKey)
 		{
-			RemoveTarget(pSearchTargetNode->m_pRightChild);
+			return RemoveTarget(pSearchTargetNode->m_pRightChild);
 		}
 		else
 		{
-			RemoveRecurse(pSearchTargetNode->m_pRightChild, removeTargetKey);
+			return RemoveRecurse(pSearchTargetNode->m_pRightChild, removeTargetKey);
 		}
 	}
 	else
 	{
 		ErrorPrint("should not reach here");
+
+		return false;
 	}
 }
 
