@@ -1,6 +1,10 @@
-#include "BST_using_recurse.h"	//(essential) 본 단원에서 재귀를 이용해 구현한 BST을 호출해서 시험함
-#include <iostream>			//(non-essential) 테스트 수행 출력문을 위해 사용함
-#include <string>				//(non-essential) BST<string> 테스트를 위해 사용함
+#include "BST_using_recurse.h"	//본 단원에서 재귀를 이용해 구현한 BST을 호출해서 시험함
+
+template <typename DataType>
+inline void RetrieveResultPrint(int key, DataType retrievedData)
+{
+	cout << "retrieve key : " << key << ", retrieved data : " << retrievedData << endl;
+}
 
 int main()
 {
@@ -17,17 +21,19 @@ int main()
 	intTestBST.PreorderPrint();
 
 	cout << endl << "검색" << endl;
-	int intRetrievedData = 0;
-	intTestBST.Retrieve(5, intRetrievedData);
-	cout << "retrieve key : " << 5 << ", retrieved data : " << intRetrievedData << endl;
-	intTestBST.Retrieve(3, intRetrievedData);
-	cout << "retrieve key : " << 3 << ", retrieved data : " << intRetrievedData << endl;
+	int intRetrievedData1 = 0;
+	intTestBST.Retrieve(5, intRetrievedData1);
+	RetrieveResultPrint(5, intRetrievedData1);
+
+	int intRetrievedData2 = 0;
+	intTestBST.Retrieve(3, intRetrievedData2);
+	RetrieveResultPrint(3, intRetrievedData2);
 	
 	cout << endl << "복사 및 전체 삭제" << endl;
 	BST<int> intCopyTestBST;
-	intCopyTestBST.CopyFrom(intTestBST);
+	intCopyTestBST.CopyTree(intTestBST);
 	intCopyTestBST.PreorderPrint();
-	intCopyTestBST.RemoveAll();
+	intCopyTestBST.RemoveTree();
 
 	cout << endl << "요소별 삭제" << endl;
 	intTestBST.Remove(7);
@@ -58,17 +64,19 @@ int main()
 	floatTestBST.PreorderPrint();
 
 	cout << endl << "검색" << endl;
-	float floatRetrievedData = 0;
-	floatTestBST.Retrieve(5, floatRetrievedData);
-	cout << "retrieve key : " << 5 << ", retrieved data : " << floatRetrievedData << endl;
-	floatTestBST.Retrieve(3, floatRetrievedData);
-	cout << "retrieve key : " << 3 << ", retrieved data : " << floatRetrievedData << endl;
+	float floatRetrievedData1 = 0;
+	floatTestBST.Retrieve(5, floatRetrievedData1);
+	RetrieveResultPrint(5, floatRetrievedData1);
+
+	float floatRetrievedData2 = 0;
+	floatTestBST.Retrieve(3, floatRetrievedData2);
+	RetrieveResultPrint(3, floatRetrievedData2);
 
 	cout << endl << "복사 및 전체 삭제" << endl;
 	BST<float> floatCopyTestBST;
-	floatCopyTestBST.CopyFrom(floatTestBST);
+	floatCopyTestBST.CopyTree(floatTestBST);
 	floatCopyTestBST.PreorderPrint();
-	floatCopyTestBST.RemoveAll();
+	floatCopyTestBST.RemoveTree();
 
 	cout << endl << "요소별 삭제" << endl;
 	floatTestBST.Remove(7);
@@ -99,17 +107,19 @@ int main()
 	stringTestBST.PreorderPrint();
 
 	cout << endl << "검색" << endl;
-	string stringRetrievedData = "";
-	stringTestBST.Retrieve(5, stringRetrievedData);
-	cout << "retrieve key : " << 5 << ", retrieved data : " << stringRetrievedData << endl;
-	stringTestBST.Retrieve(3, stringRetrievedData);
-	cout << "retrieve key : " << 3 << ", retrieved data : " << stringRetrievedData << endl;
+	string stringRetrievedData1 = "";
+	stringTestBST.Retrieve(5, stringRetrievedData1);
+	RetrieveResultPrint(5, stringRetrievedData1);
+
+	string stringRetrievedData2 = "";
+	stringTestBST.Retrieve(3, stringRetrievedData2);
+	RetrieveResultPrint(3, stringRetrievedData2);
 
 	cout << endl << "복사 및 전체 삭제" << endl;
 	BST<string> stringCopyTestBST;
-	stringCopyTestBST.CopyFrom(stringTestBST);
+	stringCopyTestBST.CopyTree(stringTestBST);
 	stringCopyTestBST.PreorderPrint();
-	stringCopyTestBST.RemoveAll();
+	stringCopyTestBST.RemoveTree();
 
 	cout << endl << "요소별 삭제" << endl;
 	stringTestBST.Remove(7);
