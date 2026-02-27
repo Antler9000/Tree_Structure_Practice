@@ -1,57 +1,95 @@
 #ifndef BST_USING_RECURSE_H
 #define BST_USING_RECURSE_H
 
+#ifdef TREE_LOG
+#define LogPrint(statement) cout << "(Log : " << __func__ << ") " << statement << endl
+#else
+#define LogPrint(statement)
+#endif
+
+#ifdef TREE_ERROR
+#define ErrorPrint(statement) cout << "(Error : " << __func__ << ") " << statement << endl
+#else
+#define ErrorPrint(statement)
+#endif
+
+#ifdef TREE_WARNING
+#define WarningPrint(statement) cout << "(Warning : " << __func__ << ") " << statement << endl
+#else
+#define WarningPrint(statement)
+#endif
+
 #include <iostream>	//에러 출력 함수와 순회 출력 함수에서 cin, cout을 사용함
 #include <string>		//에러 출력 함수의 매개변수 타입으로 string 타입을 사용함
 
 using namespace std;
 
-#define ErrorPrint(statement) cout << "(Error : " << __func__ << ") " << statement << endl;
-#define WarningPrint(statement) cout << "(Warning : " << __func__ << ") " << statement << endl;
-
 template <typename DataType>
 class BST
 {
-private:
-	template <typename DataType>
-	class BST_Node
-	{
-	private:
-		friend class BST<DataType>;
-
-		int	m_key;
-		DataType	m_data;
-		BST_Node<DataType>* m_pLeftChild;
-		BST_Node<DataType>* m_pRightChild;
-
-		BST_Node(int newKey, DataType newData)
-		{
-			m_key = newKey;
-			m_data = newData;
-			m_pLeftChild = NULL;
-			m_pRightChild = NULL;
-		}
-
-		~BST_Node()
-		{
-			delete m_pLeftChild;
-			delete m_pRightChild;
-		}
-	};
-
 public:
-	BST()
+	BST() : m_pHead(NULL)
 	{
-		m_pHead = NULL;
+		LogPrint("empty constructor");
 	}
 
-	~BST()
+	BST(const BST<DataType>& sourceBST)
 	{
+		LogPrint("copy constructor");
+
+		CopyTree(sourceBST);
+	}
+
+	BST(BST<DataType>&& sourceBST) noexcept
+	{
+		LogPrint("move constructor");
+
+		m_pHead = sourceBST.m_pHead;
+		sourceBST.m_pHead = NULL;
+	}
+
+	~BST() noexcept
+	{
+		LogPrint("destructor");
+
 		RemoveTree();
 	}
 
-	bool Insert(int newKey, DataType newData)
+	BST<DataType>& operator = (const BST<DataType>& sourceBST)
 	{
+		LogPrint("copy assignment");
+		
+		if (this == &sourceBST)
+		{
+			return *this;
+		}
+
+		CopyTree(sourceBST);
+
+		return *this;
+	}
+
+	BST<DataType>& operator = (BST<DataType>&& sourceBST) noexcept
+	{
+		LogPrint("move assignment");
+
+		if (this == &sourceBST)
+		{
+			return *this;
+		}
+
+		RemoveTree();
+
+		m_pHead = sourceBST.m_pHead;
+		sourceBST.m_pHead = NULL;
+
+		return *this;
+	}
+
+	bool Insert(const int newKey, const DataType newData)
+	{
+		LogPrint("insert");
+
 		if (m_pHead == NULL)
 		{
 			m_pHead = new BST_Node<DataType>(newKey, newData);
@@ -64,11 +102,13 @@ public:
 		}
 	}
 
-	bool Retrieve(int retrieveTargetKey, DataType& outData)
+	bool Retrieve(const int retrieveTargetKey, DataType& outData)
 	{
+		LogPrint("retrieve");
+
 		if (m_pHead == NULL)
 		{
-			WarningPrint("cannot retrieve. becuase tree is empty.");
+			WarningPrint("cannot retrieve. because tree is empty.");
 
 			return false;
 		}
@@ -76,11 +116,13 @@ public:
 		return RetrieveRecurse(m_pHead, retrieveTargetKey, outData);
 	}
 
-	bool Remove(int removeTargetKey)
+	bool Remove(const int removeTargetKey)
 	{
+		LogPrint("remove one item");
+
 		if (m_pHead == NULL)
 		{
-			WarningPrint("cannot remove. becuase tree is empty.");
+			WarningPrint("cannot remove. because tree is empty.");
 
 			return false;
 		}
@@ -95,26 +137,10 @@ public:
 		}
 	}
 
-	//트리의 값전달로 인한 복사가 일어나지 않도록 하기 위해서 레퍼런스 인자를 사용함
-	bool CopyTree(BST<DataType>& pSourceBST)
-	{		
-		if (&pSourceBST == NULL)
-		{
-			WarningPrint("cannot copying. becuase source tree is null.");
-			return false;
-		}
-		
-		if (pSourceBST.m_pHead == NULL)
-		{
-			WarningPrint("cannot coping. becuase source tree is empty.");
-			return false;
-		}
-
-		return CopyTreeRecurse(pSourceBST.m_pHead);
-	}
-
-	void RemoveTree()
+	void RemoveTree() noexcept
 	{
+		LogPrint("remove tree");
+
 		if (m_pHead != NULL)
 		{
 			delete m_pHead;
@@ -122,53 +148,99 @@ public:
 		}
 	}
 
+	//트리의 값전달로 인한 복사가 일어나지 않도록 하기 위해서 레퍼런스 인자를 사용함
+	bool CopyTree(const BST<DataType>& sourceBST)
+	{
+		LogPrint("copy tree");
+
+		if (&sourceBST == NULL)
+		{
+			WarningPrint("cannot copying. becuase source tree is null.");
+			return false;
+		}
+
+		if (sourceBST.m_pHead == NULL)
+		{
+			WarningPrint("cannot coping. becuase source tree is empty.");
+			return false;
+		}
+
+		RemoveTree();
+		
+		return CopyTreeRecurse(sourceBST.m_pHead);
+	}
+
 	void PreorderPrint()
 	{
+		LogPrint("preorder print");
+
 		if (m_pHead == NULL)
 		{
 			WarningPrint("cannot traverse print. becuase tree is empty.");
 			return;
 		}
 
-		cout << "preorder traverse..." << endl;
 		PreorderPrintRecurse(m_pHead);
-		cout << "traverse ended" << endl;
 	}
 
 	void InorderPrint()
 	{
+		LogPrint("inorder print");
+
 		if (m_pHead == NULL)
 		{
 			WarningPrint("cannot traverse print. becuase tree is empty.");
 			return;
 		}
 
-		cout << "inorder traverse..." << endl;
 		InorderPrintRecurse(m_pHead);
-		cout << "traverse ended" << endl;
 	}
 
 	void PostOrderPrint()
 	{
+		LogPrint("postorder print");
+
 		if (m_pHead == NULL)
 		{
 			WarningPrint("cannot traverse print. becuase tree is empty.");
 			return;
 		}
 
-		cout << "postorder traverse..." << endl;
 		PostOrderPrintRecurse(m_pHead);
-		cout << "traverse ended" << endl;
 	}
 
 private:
+	template <typename DataType>
+	class BST_Node
+	{
+	private:
+		friend class BST<DataType>;
+
+		int	m_key;
+		DataType	m_data;
+		BST_Node<DataType>* m_pLeftChild;
+		BST_Node<DataType>* m_pRightChild;
+
+		BST_Node(const int newKey, const DataType newData)
+			: m_key(newKey), m_data(newData), m_pLeftChild(NULL), m_pRightChild(NULL)
+		{
+
+		}
+
+		~BST_Node() noexcept
+		{
+			delete m_pLeftChild;
+			delete m_pRightChild;
+		}
+	};
+
 	BST_Node<DataType>* m_pHead;
 
-	bool InsertRecurse(BST_Node<DataType>* pSearchTargetNode, int newKey, DataType newData);
+	bool InsertRecurse(BST_Node<DataType>* pSearchTargetNode, const int newKey, const DataType newData);
 
-	bool RetrieveRecurse(BST_Node<DataType>* pSearchTargetNode, int retrieiveTargetKey, DataType& outData);
+	bool RetrieveRecurse(const BST_Node<DataType>* pSearchTargetNode, const int retrieiveTargetKey, DataType& outData);
 
-	bool RemoveRecurse(BST_Node<DataType>* pSearchTargetNode, int removeTargetKey);
+	bool RemoveRecurse(BST_Node<DataType>* pSearchTargetNode, const int removeTargetKey);
 
 	//부모가 가리키는 자식에 대한 정보를 NULL로 바꾸기 위해서 레퍼런스 인자를 사용함
 	bool RemoveTarget(BST_Node<DataType>*& pRemoveTargetNode);
@@ -177,17 +249,17 @@ private:
 
 	bool ReplaceWithInorderSuccessor(BST_Node<DataType>* pRemoveTargetNode);
 
-	bool CopyTreeRecurse(BST_Node<DataType>* pSourceNode);
+	bool CopyTreeRecurse(const BST_Node<DataType>* pSourceNode);
 
-	void PreorderPrintRecurse(BST_Node<DataType>* pTargetNode);
+	void PreorderPrintRecurse(const BST_Node<DataType>* pTargetNode);
 
-	void InorderPrintRecurse(BST_Node<DataType>* pTargetNode);
+	void InorderPrintRecurse(const BST_Node<DataType>* pTargetNode);
 
-	void PostOrderPrintRecurse(BST_Node<DataType>* pTargetNode);
+	void PostOrderPrintRecurse(const BST_Node<DataType>* pTargetNode);
 };
 
 template <typename DataType>
-bool BST<DataType>::InsertRecurse(BST_Node<DataType>* pSearchTargetNode, int newKey, DataType newData)
+bool BST<DataType>::InsertRecurse(BST_Node<DataType>* pSearchTargetNode, const int newKey, const DataType newData)
 {
 	if (newKey < pSearchTargetNode->m_key)
 	{
@@ -222,7 +294,7 @@ bool BST<DataType>::InsertRecurse(BST_Node<DataType>* pSearchTargetNode, int new
 }
 
 template <typename DataType>
-bool BST<DataType>::RetrieveRecurse(BST_Node<DataType>* pSearchTargetNode, int retrieveTargetKey, DataType& outData)
+bool BST<DataType>::RetrieveRecurse(const BST_Node<DataType>* pSearchTargetNode, const int retrieveTargetKey, DataType& outData)
 {
 	if (retrieveTargetKey < pSearchTargetNode->m_key)
 	{
@@ -256,7 +328,7 @@ bool BST<DataType>::RetrieveRecurse(BST_Node<DataType>* pSearchTargetNode, int r
 }
 
 template <typename DataType>
-bool BST<DataType>::RemoveRecurse(BST_Node<DataType>* pSearchTargetNode, int removeTargetKey)
+bool BST<DataType>::RemoveRecurse(BST_Node<DataType>* pSearchTargetNode, const int removeTargetKey)
 {
 	if (removeTargetKey < pSearchTargetNode->m_key)
 	{
@@ -359,7 +431,7 @@ bool BST<DataType>::ReplaceWithInorderSuccessor(BST_Node<DataType>* pRemoveTarge
 }
 
 template <typename DataType>
-bool BST<DataType>::CopyTreeRecurse(BST_Node<DataType>* pSourceNode)
+bool BST<DataType>::CopyTreeRecurse(const BST_Node<DataType>* pSourceNode)
 {
 	bool result = Insert(pSourceNode->m_key, pSourceNode->m_data);
 	if (pSourceNode->m_pLeftChild != NULL) result &= CopyTreeRecurse(pSourceNode->m_pLeftChild);
@@ -369,7 +441,7 @@ bool BST<DataType>::CopyTreeRecurse(BST_Node<DataType>* pSourceNode)
 }
 
 template <typename DataType>
-void BST<DataType>::PreorderPrintRecurse(BST_Node<DataType>* pTargetNode)
+void BST<DataType>::PreorderPrintRecurse(const BST_Node<DataType>* pTargetNode)
 {
 	cout << "node m_key : " << pTargetNode->m_key << " / node m_data : " << pTargetNode->m_data << endl;
 	if (pTargetNode->m_pLeftChild != NULL) PreorderPrintRecurse(pTargetNode->m_pLeftChild);
@@ -377,7 +449,7 @@ void BST<DataType>::PreorderPrintRecurse(BST_Node<DataType>* pTargetNode)
 }
 
 template <typename DataType>
-void BST<DataType>::InorderPrintRecurse(BST_Node<DataType>* pTargetNode)
+void BST<DataType>::InorderPrintRecurse(const BST_Node<DataType>* pTargetNode)
 {
 	if (pTargetNode->m_pLeftChild != NULL) InorderPrintRecurse(pTargetNode->m_pLeftChild);
 	cout << "node m_key : " << pTargetNode->m_key << " / node m_data : " << pTargetNode->m_data << endl;
@@ -385,7 +457,7 @@ void BST<DataType>::InorderPrintRecurse(BST_Node<DataType>* pTargetNode)
 }
 
 template <typename DataType>
-void BST<DataType>::PostOrderPrintRecurse(BST_Node<DataType>* pTargetNode)
+void BST<DataType>::PostOrderPrintRecurse(const BST_Node<DataType>* pTargetNode)
 {
 	if (pTargetNode->m_pLeftChild != NULL) PostOrderPrintRecurse(pTargetNode->m_pLeftChild);
 	if (pTargetNode->m_pRightChild != NULL) PostOrderPrintRecurse(pTargetNode->m_pRightChild);
